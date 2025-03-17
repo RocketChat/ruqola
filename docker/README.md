@@ -1,81 +1,154 @@
-# Ruqola Setup on WSL or WINDOWS
+# Ruqola Setup on WSL or WINDOWS 
 
-This guide provides steps to set up and run **Ruqola** on **WSL (Windows Subsystem for Linux)**.
+This guide provides steps to set up and run **Ruqola** on **WINDOWS**.
 
 ## Prerequisites
 
-- **Windows Subsystem for Linux (WSL)**
-- **Qt6 and KF6 installed** on WSL
-
+- **Windows**
+- **Docker**
+- **VcXsrv**
+- **Gitbash**
 ---
+
 ### **1. Install Docker**
 
 Ensure you have Docker installed and running on Windows:
 
-if you want to code from within WSL then and you didn't install it
+If you want to code from within WSL and haven't installed it yet(optional):
+
 ```powershell
-wsl --install -d Ubuntu 
+wsl --install -d Ubuntu
 ```
 
-### **2. Build the Docker Container**
+---
+
+### **2. Install X Server**
+
+You need this to forward GUI from Docker back to WINDOWS:
+
+#### **Install an X Server on Windows**
+
+1. **Download and install an X Server:**
+   - **VcXsrv**: [Download here](https://sourceforge.net/projects/vcxsrv/)
+
+2. **Run the X server:**
+   - Start **XLaunch**, set it to multiple windows -> start to client -> enable "Disable access control".
+
+---
+
+### **3. Build the Docker Container**
+
+0. Start gitbash:
 
 1. Clone the Ruqola repository with SSH, if not already done:
+
    ```sh
    git clone git@github.com:your-username/ruqola.git
    cd ruqola
    ```
+
 2. Build Docker:
+
    ```sh
-   docker build -it ruqola .
+   cd ruqola
+   cd docker
+   docker build -t ruqola .
    ```
 
-### **3. Run Docker**
+---
+
+### **4. Run Docker**
 
 1. Start the new container and open a shell:
 
-   This is the local folder that you are going to mount to your container 
+   This is the local folder that you are going to mount to your container:
+
    ```sh
-   -v /your/local/path:/path/within/container 
+   -v /your/local/path:/path/within/container
    ```
-   This is the actual command to run, -it stands for interactive+terminal,
-   try to setup your local/folder:container/folder to match, that way its going to be easy to switch between container and local.
+
+   This is the actual command to run (`-it` stands for interactive + terminal). Try to set up your local-folder:container-folder mapping to match, making it easier to switch between container and local:
+
    ```sh
-   docker run -it --name ruqola-container -v /your/local/path:/path/within/container ruqola-image /bin/bash
+   docker run -it --name ruqola-container -v /your/local/path:/path/within/container ruqola /bin/bash
    ```
-   Now you can always start, stop, and check running containers with next commands
+
+   Now you are within a new created container:
+
+   check 
    ```sh
-   docker stop container-name
+   cat /etc/os-release | grep "opensuse-tumbleweed" | awk -F='{print $2}'
    ```
+   you should see 
+    ```sh
+   'opensuse-tumbleweed'
+   ```
+   then 
    ```sh
-   docker start -i container-name
+   echo "export DISPLAY=host.docker.internal:0" >> ~/.bashrc
+   source ~/.bashrc
    ```
+   Test the installation with `xclock`:
+
    ```sh
-   docker ps -a 
+   xclock
    ```
-3. From inside the container, navigate to the build directory and run Ruqola:
+   
+   If a clock window appears, your X server is working correctly.
+
+   Now you can always start, stop, and check running containers with these commands:
+
+   ```sh
+   docker stop ruqola-container
+   ```
+
+   ```sh
+   docker start -i ruqola-container
+   ```
+
+   ```sh
+   docker ps -a
+   ```
+
+2. From inside the container, navigate to the build directory and run Ruqola:
+
    ```sh
    cd build
    cmake -DCMAKE_INSTALL_PREFIX=install ..
-   make 
+   make
    ./bin/ruqola
    ```
-   If you want to install then use
-    ```sh
+
+   If you want to install, use:
+
+   ```sh
    make install
    ```
-4. Now your workflow is next, you cd into your folder, code code code code, then when you want to build you
- ```sh
-    docker start -i container-name
-    ./bin/ruqola
-   ```
-   After that you can code either within container or within wsl, the changes are two way binded
 
+3. Now your workflow is:
+   - Navigate to your folder, code as usual.
+   - When you want to build, run:
 
-If you code in vscode and exprience any issues with intellisense you could download qt:
+     ```sh
+     docker start -i ruqola-container
+     ./bin/ruqola
+     ```
 
-```sh
-sudo zypper search your_package
-sudo zypper install your_package
+---
+
+### **5. Troubleshooting **
+
+If you experience issues with IntelliSense in VS Code, install Qt packages from the official ![website](https://www.qt.io/download-qt-installer-oss) and set your Qt6 path in `includePath`.
+
+```json
+"includePath": [
+    "/path/to/qt6/include"
+]
 ```
 
-HAPPY CODING, YOU ARE DONE !
+If you want to code from withing WSL, install WSL Ubuntu and clone again the ruqola repo into Ubuntu and start from there.
+
+---
+
+### **HAPPY CODING! YOU ARE DONE!** 🚀
+
