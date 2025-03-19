@@ -1,3 +1,6 @@
+#SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
+#SPDX-License-Identifier: MIT
+
 FROM opensuse/tumbleweed
 MAINTAINER openSUSE KDE Maintainers <opensuse-kde-bugs@opensuse.org>
 
@@ -392,9 +395,6 @@ RUN zypper --non-interactive in --allow-vendor-change \
     libcamera-devel \
     # audiotube
     python3-pybind11-devel
-
-
-#The following 36 lines of additional changes have been made by Andro Ranogajec, edcedcedcedc@github.
 
 #Download KDE Frameworks and Applications repos and install
 RUN curl -o /etc/zypp/repos.d/KDE_Frameworks.repo \

@@ -1,6 +1,12 @@
+
+<!--  
+SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
+SPDX-License-Identifier: MIT
+-->
+
 # Ruqola Setup on WSL or WINDOWS 
 
-This guide provides steps to set up and run **Ruqola** on **WINDOWS**.
+This guide provides steps to set up and run **Ruqola** on **WINDOWS** or **WSL**.
 
 ## Prerequisites
 
