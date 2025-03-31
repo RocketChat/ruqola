@@ -17,9 +17,9 @@
 #include <QVBoxLayout>
 
 EncryptionTestGui::EncryptionTestGui(QWidget *parent)
-    : QWidget{parent}
-    , mTextEdit(new QTextEdit(this))
-    , mTextEditResult(new QTextEdit(this))
+    : QWidget{parent},
+      mTextEdit(new QTextEdit(this)),
+      mTextEditResult(new QTextEdit(this))
 
 {
     auto mainLayout = new QVBoxLayout(this);
@@ -30,64 +30,46 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
 
     auto pushButtonDeriveMasterKey = new QPushButton(QStringLiteral("Derive Master Key"), this);
     mainLayout->addWidget(pushButtonDeriveMasterKey);
-
-    connect(pushButtonDeriveMasterKey, &QPushButton::clicked, this, [this]() {
-        auto *dialog = new QDialog(this);
-        dialog->setWindowTitle(QStringLiteral("Credentials"));
-
-        auto *userIdEdit = new QLineEdit(dialog);
-        auto *passwordEdit = new QLineEdit(dialog);
-        passwordEdit->setEchoMode(QLineEdit::Password);
-
-        auto *layout = new QGridLayout(dialog);
-        layout->addWidget(new QLabel(QStringLiteral("UserId: "), dialog), 0, 0);
-        layout->addWidget(userIdEdit, 0, 1);
-        layout->addWidget(new QLabel(QStringLiteral("Password: "), dialog), 1, 0);
-        layout->addWidget(passwordEdit, 1, 1);
-
-        auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
-        layout->addWidget(buttonBox, 2, 0, 1, 2);
-
-        connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
-        connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
-
-        if (dialog->exec()) {
-            mUserId = userIdEdit->text();
-            mPassword = passwordEdit->text();
-            mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUserId);
-            qDebug() << "Derived Master Key:" << mMasterKey.toBase64();
-            mTextEditResult->setPlainText((QStringLiteral("Master Key derivation succeeded!\n") + QString::fromUtf8(mMasterKey.toBase64())));
-        }
-        delete dialog;
-    });
+    connect(pushButtonDeriveMasterKey, &QPushButton::clicked, this,
+            [this]()
+            {
+                password = QStringLiteral("admin");
+                userId = QStringLiteral("root");
+                mMasterKey = EncryptionUtils::deriveKey(userId.toUtf8(), password.toUtf8(), 1000, 32);
+                qDebug() << "Derived Master Key:" << mMasterKey.toHex();
+                mTextEditResult->setPlainText(QStringLiteral("Master Key derived successfully!"));
+            });
 
     auto pushButtonGenerateRSAKey = new QPushButton(QStringLiteral("Generate RSA Pair"), this);
     mainLayout->addWidget(pushButtonGenerateRSAKey);
-    connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, []() {
-        // test
-    });
+    connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, []()
+            {
+                // test
+            });
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);
     mainLayout->addWidget(pushButtonGenerateSessionKey);
-    connect(pushButtonGenerateSessionKey, &QPushButton::clicked, this, []() {
-        // test
-    });
+    connect(pushButtonGenerateSessionKey, &QPushButton::clicked, this, []()
+            {
+                // test
+            });
 
     auto pushButtonEncode = new QPushButton(QStringLiteral("Encode"), this);
     mainLayout->addWidget(pushButtonEncode);
-    connect(pushButtonEncode, &QPushButton::clicked, this, []() {
-        // test
-    });
+    connect(pushButtonEncode, &QPushButton::clicked, this, []()
+            {
+                // test
+            });
     auto pushButtonDecode = new QPushButton(QStringLiteral("Decode"), this);
     mainLayout->addWidget(pushButtonDecode);
-    connect(pushButtonDecode, &QPushButton::clicked, this, []() {
-        // test
-    });
+    connect(pushButtonDecode, &QPushButton::clicked, this, []()
+            {
+                // test
+            });
 
     auto pushButtonReset = new QPushButton(QStringLiteral("Reset"), this);
     mainLayout->addWidget(pushButtonReset);
-    connect(pushButtonReset, &QPushButton::clicked, this, []() {
-        EncryptionUtils::generateRSAKey();
-    });
+    connect(pushButtonReset, &QPushButton::clicked, this, []()
+            { EncryptionUtils::generateRSAKey(); });
 
     mTextEditResult->setReadOnly(true);
     auto labelOutput = new QLabel(QStringLiteral("Output"), this);

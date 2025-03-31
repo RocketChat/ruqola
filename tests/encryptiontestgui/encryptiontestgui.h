@@ -15,11 +15,11 @@ class EncryptionTestGui : public QWidget
 public:
     explicit EncryptionTestGui(QWidget *parent = nullptr);
     ~EncryptionTestGui() override = default;
-
+    
 private:
     QTextEdit *const mTextEdit;
     QTextEdit *const mTextEditResult;
     QByteArray mMasterKey;
-    QString mPassword;
-    QString mUserId;
+    QString password;
+    QString userId;
 };
