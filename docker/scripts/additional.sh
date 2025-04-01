@@ -25,6 +25,9 @@ deactivate
 #Add an alias for activating the virtual environment to .bashrc
 echo 'alias activate_lint_env="source $HOME/.reuselintenv/bin/activate"' >> $HOME/.bashrc
 
+#Retain changes regarding alias
+source $HOME/.bashrc
+
 echo "To test lint environment for 'reuse lint' please use 'activate_lint_env' -> 'reuse --version' and then 'deactivate'"
 
 echo "Additional setup complete! Happy Linting! :)"
