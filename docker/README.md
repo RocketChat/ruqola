@@ -1,160 +1,217 @@
-
 <!--  
 SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
 SPDX-License-Identifier: MIT
 -->
 
-# Ruqola Setup on WSL or WINDOWS 
-
-This guide provides steps to set up and run **Ruqola** on **WINDOWS** or **WSL**.
+# Ruqola Setup on WSL/WINDOWS in Two Installs: Direct or with Docker
 
 ## Prerequisites
 
 - **Windows**
 - **Docker**
 - **VcXsrv**
-- **Gitbash**
+- **Git Bash**
+
 ---
 
-### **1. Install Docker**
+## Direct Install
 
-Ensure you have Docker installed and running on Windows:
-
-If you want to code from within WSL and haven't installed it yet(optional):
+### **0. Install WSL openSUSE-Tumbleweed**
 
 ```powershell
-wsl --install -d Ubuntu
+wsl --install -d openSUSE-Tumbleweed
 ```
 
----
+### **1. Install Docker and Git Bash**
+- **Docker**: [Download here](https://docs.docker.com/desktop/setup/install/windows-install/)
+- **Git Bash**: [Download here](https://git-scm.com/downloads/win)
+
+**NOTES:**
+- Enable Docker on WSL openSUSE-Tumbleweed using the widget provided.
+- Test it using:
+  ```sh
+  docker -v
+  ```
 
 ### **2. Install X Server**
+- **VcXsrv**: [Download here](https://sourceforge.net/projects/vcxsrv/)
 
-You need this to forward GUI from Docker back to WINDOWS:
+**Run the X Server:**
+- Start **XLaunch**, select:
+  - **Multiple Windows**
+  - **Start No Client**
+  - **Enable "Disable access control"**
 
-#### **Install an X Server on Windows**
+### **3. Configure WSL**
 
-1. **Download and install an X Server:**
-   - **VcXsrv**: [Download here](https://sourceforge.net/projects/vcxsrv/)
+Start WSL openSUSE-Tumbleweed:
 
-2. **Run the X server:**
-   - Start **XLaunch**, set it to multiple windows -> start to client -> enable "Disable access control".
+```sh
+chmod +x init.sh
+./init.sh
+```
+
+**NOTES:**
+- This configures WSL openSUSE.
+- If you encounter repository errors, retry later.
+- Ignore missing dependency warnings by pressing "c".
+- If you face build errors in Ruqola, check `.bashrc` settings or consult online resources.
+
+```sh
+chmod +x additional.sh
+./additional.sh
+```
+
+**NOTES:**
+- Creates a virtual environment for `reuse lint`.
+- Test it with:
+  ```sh
+  activate_lint_env
+  reuse --version
+  deactivate
+  ```
+
+#### **Test X Server for GUI Forwarding**
+
+```sh
+echo 'export DISPLAY=$(ip route | grep default | awk "{print \$3}"):0' >> ~/.bashrc
+source ~/.bashrc
+xclock
+```
+
+**NOTES:**
+- Use either X Server or WSL2g. X Server is recommended for smoother performance.
+
+#### **Run Ruqola Client**
+
+```sh
+cd ruqola
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=install ..
+make
+./bin/ruqola
+```
+
+To install Ruqola Client(optional):
+```sh
+make install
+```
+
+#### **Run and Install Rocket.Chat Server**
+
+```sh
+cd docker
+```
+
+- **Deploy with Docker & Docker Compose**: [Tutorial](https://docs.rocket.chat/v1/docs/deploy-with-docker-docker-compose)
+
+If `docker-compose up -d` fails, inspect logs:
+```sh
+docker logs <container>
+```
+
+**NOTES:**
+- Set PORT to `3000`.
+- Store Docker-related files in `ruqola/docker/`. Ensure `.gitignore` includes `compose.yml` and `.env`.
+
+#### **Install Your Preferred IDE/Editor**
+
+**NOTES:**
+- If using VS Code, install the C/C++ IntelliSense extension.
+
+**🚀 CONGRATULATIONS! YOU'VE COMPLETED THE DIRECT INSTALL!**
 
 ---
 
-### **3. Build the Docker Container**
+## Docker Install
 
-0. Start gitbash:
+### **0. Build the Docker Container**
 
-1. Clone the Ruqola repository with SSH, if not already done:
+#### **1. Clone Ruqola Repository with SSH**
 
-   ```sh
-   git clone git@github.com:your-username/ruqola.git
-   cd ruqola
-   ```
+```sh
+git clone git@github.com:your-username/ruqola.git
+cd ruqola
+```
 
-2. Build Docker:
+#### **2. Build Docker Image**
 
-   ```sh
-   cd ruqola
-   cd docker
-   docker build -t ruqola .
-   ```
+```sh
+cd docker
+docker build -t ruqola .
+```
 
----
+**NOTES:**
+- You can clone the repository using Git Bash, WSL-Ubuntu, or WSL-openSUSE-Tumbleweed.
 
 ### **4. Run Docker**
 
-1. Start the new container and open a shell:
+#### **0. Start a New Container and Open a Shell**
 
-   This is the local folder that you are going to mount to your container:
+Mount your local folder to the container:
 
-   ```sh
-   -v /your/local/path:/path/within/container
-   ```
-
-   This is the actual command to run (`-it` stands for interactive + terminal). Try to set up your local-folder:container-folder mapping to match, making it easier to switch between container and local:
-
-   ```sh
-   docker run -it --name ruqola-container -v /your/local/path:/path/within/container ruqola /bin/bash
-   ```
-
-   Now you are within a new created container:
-
-   check 
-   ```sh
-   cat /etc/os-release | grep "opensuse-tumbleweed" | awk -F='{print $2}'
-   ```
-   you should see 
-    ```sh
-   'opensuse-tumbleweed'
-   ```
-   then 
-   ```sh
-   echo "export DISPLAY=host.docker.internal:0" >> ~/.bashrc
-   source ~/.bashrc
-   ```
-   Test the installation with `xclock`:
-
-   ```sh
-   xclock
-   ```
-   
-   If a clock window appears, your X server is working correctly.
-
-   Now you can always start, stop, and check running containers with these commands:
-
-   ```sh
-   docker stop ruqola-container
-   ```
-
-   ```sh
-   docker start -i ruqola-container
-   ```
-
-   ```sh
-   docker ps -a
-   ```
-
-2. From inside the container, navigate to the build directory and run Ruqola:
-
-   ```sh
-   cd build
-   cmake -DCMAKE_INSTALL_PREFIX=install ..
-   make
-   ./bin/ruqola
-   ```
-
-   If you want to install, use:
-
-   ```sh
-   make install
-   ```
-
-3. Now your workflow is:
-   - Navigate to your folder, code as usual.
-   - When you want to build, run:
-
-     ```sh
-     docker start -i ruqola-container
-     ./bin/ruqola
-     ```
-
----
-
-### **5. Troubleshooting **
-
-If you experience issues with IntelliSense in VS Code, install Qt packages from the official ![website](https://www.qt.io/download-qt-installer-oss) and set your Qt6 path in `includePath`.
-
-```json
-"includePath": [
-    "/path/to/qt6/include"
-]
+```sh
+docker run -it --name ruqola-container -v /your/local/path:/path/within/container ruqola /bin/bash
 ```
 
-If you want to code from withing WSL, install WSL Ubuntu and clone again the ruqola repo into Ubuntu and start from there.
+Check OS inside the container:
 
----
+```sh
+cat /etc/os-release | grep "opensuse-tumbleweed" | awk -F=' {print $2}'
+```
 
-### **HAPPY CODING! YOU ARE DONE!** 🚀
+If correct, configure DISPLAY:
+
+```sh
+echo "export DISPLAY=host.docker.internal:0" >> ~/.bashrc
+source ~/.bashrc
+```
+
+Test the installation:
+
+```sh
+xclock
+```
+
+If the clock window appears, the X server is set up correctly.
+
+To manage containers:
+
+```sh
+docker stop ruqola-container
+```
+
+```sh
+docker start -i ruqola-container
+```
+
+```sh
+docker ps -a
+```
+
+#### **1. Run Ruqola from Inside the Container**
+
+```sh
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=install ..
+make
+./bin/ruqola
+```
+
+To install Ruqola Client(optional):
+
+```sh
+make install
+```
+
+#### **2. Development Workflow**
+- Navigate to your project folder and edit as usual.
+- To build and run:
+  ```sh
+  docker start -i ruqola-container
+  ./bin/ruqola
+  ```
+
+**🚀 CONGRATULATIONS! YOU'VE COMPLETED THE DOCKER INSTALL!**
 
