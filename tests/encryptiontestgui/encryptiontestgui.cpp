@@ -55,7 +55,13 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
 
     if (dialog->exec()) {
-      // test
+      password = QStringLiteral("admin");
+      userId = QStringLiteral("root");
+      mMasterKey = EncryptionUtils::deriveKey(userId.toUtf8(),
+                                              password.toUtf8(), 1000, 32);
+      qDebug() << "Derived Master Key:" << mMasterKey.toHex();
+      mTextEditResult->setPlainText(
+          QStringLiteral("Master Key derived successfully!"));
     }
   });
 
