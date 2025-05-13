@@ -12,7 +12,7 @@ class EncryptionTestGui : public QWidget {
   Q_OBJECT
 public:
   explicit EncryptionTestGui(QWidget *parent = nullptr);
-  ~EncryptionTestGui() override;
+  ~EncryptionTestGui() override = default;
 
 private:
   QTextEdit *const mTextEdit;

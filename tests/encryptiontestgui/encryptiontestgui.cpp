@@ -92,10 +92,6 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(mTextEditResult);
 }
 
-EncryptionTestGui::~EncryptionTestGui()
-{
-}
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
