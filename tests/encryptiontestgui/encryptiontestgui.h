@@ -8,16 +8,17 @@
 
 #include <QWidget>
 class QTextEdit;
-class EncryptionTestGui : public QWidget {
-  Q_OBJECT
+class EncryptionTestGui : public QWidget
+{
+    Q_OBJECT
 public:
-  explicit EncryptionTestGui(QWidget *parent = nullptr);
-  ~EncryptionTestGui() override;
+    explicit EncryptionTestGui(QWidget *parent = nullptr);
+    ~EncryptionTestGui() override;
 
 private:
-  QTextEdit *const mTextEdit;
-  QTextEdit *const mTextEditResult;
-  QByteArray mMasterKey = nullptr;
-  QString password;
-  QString userId;
+    QTextEdit *const mTextEdit;
+    QTextEdit *const mTextEditResult;
+    QString mMasterKey;
+    QString password;
+    QString userId;
 };
