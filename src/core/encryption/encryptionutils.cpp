@@ -1,6 +1,6 @@
 /*
   SPDX-FileCopyrightText: 2024-2025 Laurent Montel <montel@kde.org>
-
+  SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -115,16 +115,25 @@ QString EncryptionUtils::getMasterKey(const QString &password, const QString &us
         return {};
     }
 
-#if 0
-    // First, create a PBKDF2 "key" containing the password
-    const QByteArray baseKey = importRawKey(toArrayBuffer(password.toUtf8()));
-    if (baseKey.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Problem during import raw key";
+    if (userId.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "UserId can't be null. It's a bug";
         return {};
     }
-    // Derive a key from the password
-    return deriveKey(toArrayBuffer(userId.toLatin1()), baseKey);
-#endif
+
+    const QByteArray baseKey = importRawKey(password.toUtf8(), userId.toUtf8(), 1000);
+    if (baseKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Failed to derive base key from password!";
+        return {};
+    }
+
+    const QByteArray masterKey = deriveKey(userId.toUtf8(), baseKey, 1000, 32);
+    if (masterKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Failed to derive master key!";
+        return {};
+    }
+
+    return QString::fromUtf8(masterKey.toHex());
+
 #if 0
     async getMasterKey(password: string): Promise<void | CryptoKey> {
             if (password == null) {
@@ -148,11 +157,9 @@ QString EncryptionUtils::getMasterKey(const QString &password, const QString &us
                     return this.error('Error deriving baseKey: ', error);
             }
     }
-
-#endif
-
     // TODO
     return {};
+#endif
 }
 
 QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
@@ -189,8 +196,26 @@ QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteAr
 QByteArray EncryptionUtils::generateRandomIV(int size)
 {
     QByteArray iv(size, 0);
-    // TODO QRandomGenerator::global()->generate(reinterpret_cast<quint8*>(iv.data()), size);
+
+    if (RAND_bytes(reinterpret_cast<unsigned char *>(iv.data()), size) != 1) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Failed to generate random IV using OpenSSL!";
+        return {};
+    }
+
     return iv;
+}
+
+QString EncryptionUtils::generateRandomText(int length)
+{
+    const QString characters = QStringLiteral("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?");
+    QString randomText;
+
+    for (int i = 0; i < length; ++i) {
+        int index = QRandomGenerator::global()->bounded(characters.size());
+        randomText.append(characters.at(index));
+    }
+
+    return randomText;
 }
 
 QByteArray EncryptionUtils::deriveKey(const QByteArray &salt, const QByteArray &baseKey, int iterations, int keyLength)
@@ -350,16 +375,17 @@ QByteArray EncryptionUtils::importRawKey(const QByteArray &keyData, const QByteA
     export async function importRawKey(keyData, keyUsages = ['deriveKey']) {
             return crypto.subtle.importKey('raw', keyData, { name: 'PBKDF2' }, false, keyUsages);
     }
-
 #endif
 
-    // TODO
-    QByteArray iv;
-    QByteArray plainText;
+#if 0
+    QByteArray iv = generateRandomIV(16);
+    QByteArray data = generateRandomText(16).toUtf8();
+    QByteArray cipherText = encryptAES_CBC(data, key, iv);
+#endif
 
-    const QByteArray key = deriveKey(keyData, salt, iterations);
-    const QByteArray cipherText = encryptAES_CBC(plainText, key, iv);
-    return cipherText;
+    QByteArray baseKey = deriveKey(keyData, salt, iterations);
+
+    return baseKey;
 }
 
 bool EncryptionUtils::EncryptionInfo::isValid() const
