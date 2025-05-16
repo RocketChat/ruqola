@@ -47,7 +47,6 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
 
         auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
         layout->addWidget(buttonBox, 2, 0, 1, 2);
-        // dialog->show();
 
         connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
         connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
