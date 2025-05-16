@@ -58,6 +58,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             qDebug() << "Derived Master Key:" << mMasterKey;
             mTextEditResult->setPlainText(QStringLiteral("Master Key derived successfully!"));
         }
+
+        delete dialog;
     });
 
     auto pushButtonGenerateRSAKey = new QPushButton(QStringLiteral("Generate RSA Pair"), this);
