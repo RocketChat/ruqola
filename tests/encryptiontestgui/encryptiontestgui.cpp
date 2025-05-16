@@ -35,8 +35,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         auto *dialog = new QDialog(this);
         dialog->setWindowTitle(QStringLiteral("Credentials"));
 
-        auto *userIdEdit = new QLineEdit;
-        auto *passwordEdit = new QLineEdit;
+        auto *userIdEdit = new QLineEdit(dialog);
+        auto *passwordEdit = new QLineEdit(dialog);
         passwordEdit->setEchoMode(QLineEdit::Password);
 
         auto *layout = new QGridLayout(dialog);
@@ -48,7 +48,6 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
         layout->addWidget(buttonBox, 2, 0, 1, 2);
         // dialog->show();
-        dialog->setLayout(layout);
 
         connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
         connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
