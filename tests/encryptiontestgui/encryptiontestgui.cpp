@@ -56,6 +56,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         if (dialog->exec()) {
             // test
         }
+
+        delete dialog;
     });
 
     auto pushButtonGenerateRSAKey = new QPushButton(QStringLiteral("Generate RSA Pair"), this);
