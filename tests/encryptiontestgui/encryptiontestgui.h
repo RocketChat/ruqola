@@ -13,12 +13,12 @@ class EncryptionTestGui : public QWidget
     Q_OBJECT
 public:
     explicit EncryptionTestGui(QWidget *parent = nullptr);
-  ~EncryptionTestGui() override = default;
+    ~EncryptionTestGui() override = default;
 
 private:
     QTextEdit *const mTextEdit;
     QTextEdit *const mTextEditResult;
-    QString mMasterKey;
+    QByteArray mMasterKey = nullptr;
     QString password;
     QString userId;
 };
