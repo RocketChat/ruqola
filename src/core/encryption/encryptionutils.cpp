@@ -211,7 +211,7 @@ QString EncryptionUtils::generateRandomText(int length)
     QString randomText;
 
     for (int i = 0; i < length; ++i) {
-        int index = QRandomGenerator::global()->bounded(characters.size());
+        const int index = QRandomGenerator::global()->bounded(characters.size());
         randomText.append(characters.at(index));
     }
 
@@ -383,7 +383,7 @@ QByteArray EncryptionUtils::importRawKey(const QByteArray &keyData, const QByteA
     QByteArray cipherText = encryptAES_CBC(data, key, iv);
 #endif
 
-    QByteArray baseKey = deriveKey(keyData, salt, iterations);
+    const QByteArray baseKey = deriveKey(keyData, salt, iterations);
 
     return baseKey;
 }
