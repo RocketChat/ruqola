@@ -32,23 +32,21 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(pushButtonDeriveMasterKey);
 
     connect(pushButtonDeriveMasterKey, &QPushButton::clicked, this, [this]() {
-        QDialog *dialog = new QDialog(this);
+        auto *dialog = new QDialog(this);
         dialog->setWindowTitle(QStringLiteral("Credentials"));
 
-        QLineEdit *userIdEdit = new QLineEdit;
-        QLineEdit *passwordEdit = new QLineEdit;
+        auto *userIdEdit = new QLineEdit(dialog);
+        auto *passwordEdit = new QLineEdit(dialog);
         passwordEdit->setEchoMode(QLineEdit::Password);
 
-        QGridLayout *layout = new QGridLayout(dialog);
+        auto *layout = new QGridLayout(dialog);
         layout->addWidget(new QLabel(QStringLiteral("UserId: "), dialog), 0, 0);
         layout->addWidget(userIdEdit, 0, 1);
         layout->addWidget(new QLabel(QStringLiteral("Password: "), dialog), 1, 0);
         layout->addWidget(passwordEdit, 1, 1);
 
-        QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
+        auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
         layout->addWidget(buttonBox, 2, 0, 1, 2);
-        // dialog->show();
-        dialog->setLayout(layout);
 
         connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
         connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
@@ -94,10 +92,6 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto labelOutput = new QLabel(QStringLiteral("Output"), this);
     mainLayout->addWidget(labelOutput);
     mainLayout->addWidget(mTextEditResult);
-}
-
-EncryptionTestGui::~EncryptionTestGui()
-{
 }
 
 int main(int argc, char *argv[])
