@@ -20,6 +20,6 @@ private:
     QTextEdit *const mTextEdit;
     QTextEdit *const mTextEditResult;
     QString mMasterKey;
-    QString password;
-    QString userId;
+    QString mPassword;
+    QString mUserId;
 };
