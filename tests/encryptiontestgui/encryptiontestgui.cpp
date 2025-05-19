@@ -52,9 +52,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
 
         if (dialog->exec() == QDialog::Accepted) {
-            userId = userIdEdit->text();
-            password = passwordEdit->text();
-            mMasterKey = EncryptionUtils::getMasterKey(password, userId);
+            mUserId = userIdEdit->text();
+            mPassword = passwordEdit->text();
+            mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUserId);
             qDebug() << "Derived Master Key:" << mMasterKey;
             mTextEditResult->setPlainText(QStringLiteral("Master Key derived successfully!"));
         }

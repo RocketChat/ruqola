@@ -19,7 +19,7 @@ public:
 private:
     QTextEdit *const mTextEdit;
     QTextEdit *const mTextEditResult;
-    QByteArray mMasterKey = nullptr;
-    QString password;
-    QString userId;
+    QString mMasterKey;
+    QString mPassword;
+    QString mUserId;
 };
