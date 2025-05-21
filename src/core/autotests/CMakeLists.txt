@@ -160,8 +160,10 @@ endif()
 
 add_ruqola_test(appsmarketplaceinfotest.cpp)
 add_ruqola_test(textconvertertest.cpp)
+#E2EE TESTS
 if(USE_E2E_SUPPORT)
     add_ruqola_test(encryptionutilstest.cpp)
+    add_ruqola_test(testmasterkey.cpp)
 endif()
 
 add_ruqola_test(channelstest.cpp)

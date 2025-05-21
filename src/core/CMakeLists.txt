@@ -587,6 +587,9 @@ if(UNITY_SUPPORT)
     target_link_libraries(libruqolacore Qt::DBus)
 endif()
 
+#Make OPENSSL::Crypto available for linking
+find_package(OpenSSL REQUIRED)
+
 if(USE_E2E_SUPPORT)
     target_link_libraries(libruqolacore OpenSSL::Crypto)
 endif()
@@ -792,6 +795,7 @@ if(BUILD_TESTING)
     add_subdirectory(autotests)
     add_subdirectory(localdatabase/autotests)
 endif()
+
 if(USE_E2E_SUPPORT)
     add_subdirectory(encryption/tests)
 endif()
