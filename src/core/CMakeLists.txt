@@ -657,9 +657,6 @@ endif()
 
 target_link_libraries(libruqolacore cmark-rc)
 
-#Make OPENSSL::Crypto available for linking
-find_package(OpenSSL REQUIRED)
-
 if(USE_E2E_SUPPORT)
     target_link_libraries(libruqolacore OpenSSL::Crypto)
 endif()
