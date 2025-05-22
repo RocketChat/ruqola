@@ -4,12 +4,12 @@
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#include "testmasterkey.h"
+#include "masterkeytest.h"
 #include "encryption/encryptionutils.h"
 #include <QDebug>
 #include <QTest>
 
-TestMasterKey::TestMasterKey(QObject *parent)
+MasterKeyTest::MasterKeyTest(QObject *parent)
     : QObject(parent)
 {
 }
@@ -27,7 +27,7 @@ TestMasterKey::TestMasterKey(QObject *parent)
  * then
  * getMasterKey(n, m) != getMasterKey(n1, m1)
  */
-void TestMasterKey::testMasterKeyDeterminism()
+void MasterKeyTest::masterKeyDeterminismTest()
 {
     QString masterKey1;
     QString masterKey2;
@@ -43,21 +43,21 @@ void TestMasterKey::testMasterKeyDeterminism()
     }
 }
 
-void TestMasterKey::testMasterKeyEmptyPassword()
+void MasterKeyTest::masterKeyEmptyPasswordTest()
 {
     QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral(""), QStringLiteral("someUser"));
     QVERIFY(masterKey.isEmpty());
 }
 
-void TestMasterKey::testMasterKeyEmptyUserId()
+void MasterKeyTest::masterKeyEmptyUserIdTest()
 {
     QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral("somePassword"), QStringLiteral(""));
     QVERIFY(masterKey.isEmpty());
 }
 
-void TestMasterKey::testImportRawKey()
+void MasterKeyTest::importRawKeyTest()
 {
 }
 
-QTEST_GUILESS_MAIN(TestMasterKey)
-#include "moc_testmasterkey.cpp"
+QTEST_GUILESS_MAIN(MasterKeyTest)
+#include "moc_masterkeytest.cpp"
