@@ -8,7 +8,7 @@
 #include "encryption/encryptionutils.h"
 #include <QDebug>
 #include <QTest>
-
+QTEST_GUILESS_MAIN(MasterKeyTest)
 MasterKeyTest::MasterKeyTest(QObject *parent)
     : QObject(parent)
 {
@@ -59,5 +59,4 @@ void MasterKeyTest::importRawKeyTest()
 {
 }
 
-QTEST_GUILESS_MAIN(MasterKeyTest)
 #include "moc_masterkeytest.cpp"
