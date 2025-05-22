@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTextEdit>
+#include <QTimer>
 #include <QVBoxLayout>
 
 EncryptionTestGui::EncryptionTestGui(QWidget *parent)
@@ -57,6 +58,10 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUserId);
             qDebug() << "Derived Master Key:" << mMasterKey;
             mTextEditResult->setPlainText(QStringLiteral("Master Key derived successfully!"));
+
+            QTimer::singleShot(1000, this, [this]() {
+                mTextEditResult->setPlainText(mMasterKey);
+            });
         }
 
         delete dialog;
