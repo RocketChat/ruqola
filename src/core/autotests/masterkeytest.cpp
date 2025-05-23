@@ -57,6 +57,18 @@ void MasterKeyTest::masterKeyEmptyUserIdTest()
 
 void MasterKeyTest::importRawKeyTest()
 {
+    QByteArray baseKey1;
+    QByteArray baseKey2;
+
+    for (int i = 0; i <= 10; i++) {
+        baseKey1 = EncryptionUtils::importRawKey(QStringLiteral("admin").toUtf8(), QStringLiteral("root").toUtf8(), 1000);
+        baseKey2 = EncryptionUtils::importRawKey(QStringLiteral("admin").toUtf8(), QStringLiteral("root").toUtf8(), 1000);
+        QVERIFY(baseKey1 == baseKey2);
+
+        baseKey1 = EncryptionUtils::importRawKey(QStringLiteral("admin").toUtf8(), QStringLiteral("root").toUtf8(), 1000);
+        baseKey2 = EncryptionUtils::importRawKey(QStringLiteral("root").toUtf8(), QStringLiteral("admin").toUtf8(), 1000);
+        QVERIFY(baseKey1 != baseKey2);
+    }
 }
 
 #include "moc_masterkeytest.cpp"
