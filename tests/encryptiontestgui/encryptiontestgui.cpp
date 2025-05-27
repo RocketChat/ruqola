@@ -60,8 +60,10 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
 
     auto pushButtonGenerateRSAKey = new QPushButton(QStringLiteral("Generate RSA Pair"), this);
     mainLayout->addWidget(pushButtonGenerateRSAKey);
-    connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, []() {
-        // test
+    connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, [this]() {
+        EncryptionUtils::RSAKeyPair rsaKeyPair = EncryptionUtils::generateRSAKey();
+        qDebug() << rsaKeyPair.publicKey;
+        qDebug() << rsaKeyPair.privateKey;
     });
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);
     mainLayout->addWidget(pushButtonGenerateSessionKey);

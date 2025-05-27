@@ -1,5 +1,6 @@
 /*
   SPDX-FileCopyrightText: 2024-2025 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -19,9 +20,13 @@ struct LIBRUQOLACORE_TESTS_EXPORT EncryptionInfo {
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] bool operator==(const EncryptionInfo &other) const;
 };
+struct RSAKeyPair {
+    QString publicKey;
+    QString privateKey;
+};
 
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray exportJWKKey(RSA *rsaKey);
-LIBRUQOLACORE_TESTS_EXPORT void generateRSAKey();
+[[nondiscard]] LIBRUQOLACORE_TESTS_EXPORT RSAKeyPair generateRSAKey();
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QString encodePrivateKey(const QString &privateKey, const QString &password, const QString &userId);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QString getMasterKey(const QString &password, const QString &userId);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv);

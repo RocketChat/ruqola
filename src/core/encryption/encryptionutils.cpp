@@ -1,5 +1,6 @@
 /*
   SPDX-FileCopyrightText: 2024-2025 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -56,13 +57,18 @@ QByteArray EncryptionUtils::exportJWKKey(RSA *rsaKey)
     return doc.toJson(QJsonDocument::Compact);
 }
 
-void EncryptionUtils::generateRSAKey()
+EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
 {
+    RSAKeyPair keyPair;
+
     int ret = 0;
     RSA *rsa = nullptr;
     BIGNUM *bne = nullptr;
     BIO *bp_public = nullptr;
     BIO *bp_private = nullptr;
+
+    BIO *pubBio = BIO_new(BIO_s_mem());
+    BIO *privBio = BIO_new(BIO_s_mem());
 
     int bits = 2048;
     unsigned long e = RSA_F4; // équivalent à 0x10001
@@ -71,17 +77,17 @@ void EncryptionUtils::generateRSAKey()
     ret = BN_set_word(bne, e);
     if (ret != 1) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Error when generating exponent";
-        return;
+        return {};
     }
 
     rsa = RSA_new();
     ret = RSA_generate_key_ex(rsa, bits, bne, nullptr);
     if (ret != 1) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Error during generate key";
-        return;
+        return {};
     }
 
-    bp_public = BIO_new_file("public_key.pem", "w+");
+    /* bp_public = BIO_new_file("public_key.pem", "w+");
     ret = PEM_write_bio_RSAPublicKey(bp_public, rsa);
     if (ret != 1) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Error when saving public key";
@@ -93,13 +99,29 @@ void EncryptionUtils::generateRSAKey()
     if (ret != 1) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Error when saving private key";
         return;
-    }
+    } */
+
+    PEM_write_bio_RSA_PUBKEY(pubBio, rsa);
+    PEM_write_bio_RSAPrivateKey(privBio, rsa, nullptr, nullptr, 0, nullptr, nullptr);
+
+    BUF_MEM *pubBuf = nullptr;
+    BUF_MEM *privBuf = nullptr;
+
+    BIO_get_mem_ptr(pubBio, &pubBuf);
+    BIO_get_mem_ptr(privBio, &privBuf);
+
+    keyPair.publicKey = QString::fromUtf8(pubBuf->data, pubBuf->length);
+    keyPair.privateKey = QString::fromUtf8(privBuf->data, privBuf->length);
 
     // Libérer la mémoire
-    BIO_free_all(bp_public);
-    BIO_free_all(bp_private);
+    // BIO_free_all(bp_public);
+    // BIO_free_all(bp_private);
+    BIO_free_all(pubBio);
+    BIO_free_all(privBio);
     RSA_free(rsa);
     BN_free(bne);
+
+    return keyPair;
 }
 
 QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QString &password, const QString &userId)
