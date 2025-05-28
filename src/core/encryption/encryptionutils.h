@@ -10,6 +10,7 @@
 extern "C" {
 #include <openssl/bn.h>
 #include <openssl/pem.h>
+#include <openssl/rand.h>
 #include <openssl/rsa.h>
 }
 namespace EncryptionUtils

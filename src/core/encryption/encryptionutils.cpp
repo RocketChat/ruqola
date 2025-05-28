@@ -217,7 +217,12 @@ QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteAr
 QByteArray EncryptionUtils::generateRandomIV(int size)
 {
     QByteArray iv(size, 0);
-    // TODO QRandomGenerator::global()->generate(reinterpret_cast<quint8*>(iv.data()), size);
+
+    if (RAND_bytes(reinterpret_cast<unsigned char *>(iv.data()), size) != 1) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Failed to generate random IV using OpenSSL!";
+        return {};
+    }
+
     return iv;
 }
 
