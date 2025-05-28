@@ -126,13 +126,26 @@ EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
 
 QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QString &password, const QString &userId)
 {
-    const QString masterKey = getMasterKey(password, userId);
-    return {};
+    const QByteArray masterKey = QStringLiteral("qwertyuiopasdfgh").toUtf8();
+    const QByteArray iv = generateRandomIV(16);
+    const QByteArray data = privateKey.toUtf8();
+    const QByteArray ciphertext = encryptAES_CBC(data, masterKey, iv);
+
+    if (ciphertext.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encryption of the private key failed, cipherText is empty";
+        return {};
+    }
+
+    QByteArray encoded;
+    encoded.append(iv);
+    encoded.append(ciphertext);
+
+    return QString::fromUtf8(encoded);
 }
 
-QString EncryptionUtils::decodePrivateKey(const QString &privateKey, const QString &password, const QString &userId)
+QString EncryptionUtils::decodePrivateKey(const QString &encoded, const QString &password, const QString &userId)
 {
-    const QString masterKey = getMasterKey(password, userId);
+    const QString masterKey = QStringLiteral("key");
     return {};
 }
 
