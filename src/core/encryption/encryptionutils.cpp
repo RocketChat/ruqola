@@ -130,6 +130,12 @@ QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QStri
     return {};
 }
 
+QString EncryptionUtils::decodePrivateKey(const QString &privateKey, const QString &password, const QString &userId)
+{
+    const QString masterKey = getMasterKey(password, userId);
+    return {};
+}
+
 QString EncryptionUtils::getMasterKey(const QString &password, const QString &userId)
 {
     if (password.isEmpty()) {
