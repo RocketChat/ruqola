@@ -62,8 +62,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(pushButtonGenerateRSAKey);
     connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, [this]() {
         auto rsaKeyPair = EncryptionUtils::generateRSAKey();
-        qDebug() << rsaKeyPair.publicKey;
-        qDebug() << rsaKeyPair.privateKey;
+        qDebug() << "Public Key: " << rsaKeyPair.publicKey << "Private Key: " << rsaKeyPair.privateKey;
+        mTextEditResult->setPlainText(rsaKeyPair.publicKey + rsaKeyPair.privateKey);
     });
 
     auto pushButtonEncodePrivateKey = new QPushButton(QStringLiteral("Encode Private Key"), this);
