@@ -65,27 +65,40 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         qDebug() << rsaKeyPair.publicKey;
         qDebug() << rsaKeyPair.privateKey;
     });
+
+    auto pushButtonEncodePrivateKey = new QPushButton(QStringLiteral("Encode Private Key"), this);
+    mainLayout->addWidget(pushButtonEncodePrivateKey);
+    connect(pushButtonEncodePrivateKey, &QPushButton::clicked, this, []() {
+        // test
+    });
+    auto pushButtonDecodePrivateKey = new QPushButton(QStringLiteral("Decode Private Key"), this);
+    mainLayout->addWidget(pushButtonDecodePrivateKey);
+    connect(pushButtonDecodePrivateKey, &QPushButton::clicked, this, []() {
+        // test
+    });
+
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);
     mainLayout->addWidget(pushButtonGenerateSessionKey);
     connect(pushButtonGenerateSessionKey, &QPushButton::clicked, this, []() {
         // test
     });
 
-    auto pushButtonEncode = new QPushButton(QStringLiteral("Encode"), this);
-    mainLayout->addWidget(pushButtonEncode);
-    connect(pushButtonEncode, &QPushButton::clicked, this, []() {
+    auto pushButtonEncodeMessage = new QPushButton(QStringLiteral("Encode Message"), this);
+    mainLayout->addWidget(pushButtonEncodeMessage);
+    connect(pushButtonEncodeMessage, &QPushButton::clicked, this, []() {
         // test
     });
-    auto pushButtonDecode = new QPushButton(QStringLiteral("Decode"), this);
-    mainLayout->addWidget(pushButtonDecode);
-    connect(pushButtonDecode, &QPushButton::clicked, this, []() {
+
+    auto pushButtonDecodeMessage = new QPushButton(QStringLiteral("Decode Message"), this);
+    mainLayout->addWidget(pushButtonDecodeMessage);
+    connect(pushButtonDecodeMessage, &QPushButton::clicked, this, []() {
         // test
     });
 
     auto pushButtonReset = new QPushButton(QStringLiteral("Reset"), this);
     mainLayout->addWidget(pushButtonReset);
     connect(pushButtonReset, &QPushButton::clicked, this, []() {
-        EncryptionUtils::generateRSAKey();
+        // test
     });
 
     mTextEditResult->setReadOnly(true);
