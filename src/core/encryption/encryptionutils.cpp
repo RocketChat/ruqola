@@ -209,9 +209,10 @@ QString EncryptionUtils::generateRandomText(int length)
 {
     const QString characters = QStringLiteral("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?");
     QString randomText;
+    const int charSize = characters.size();
 
     for (int i = 0; i < length; ++i) {
-        const int index = QRandomGenerator::global()->bounded(characters.size());
+        int index = QRandomGenerator::global()->bounded(charSize);
         randomText.append(characters.at(index));
     }
 
