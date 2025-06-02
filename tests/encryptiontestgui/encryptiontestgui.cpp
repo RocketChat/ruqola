@@ -63,13 +63,16 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, [this]() {
         auto rsaKeyPair = EncryptionUtils::generateRSAKey();
         qDebug() << "Public Key: " << rsaKeyPair.publicKey << "Private Key: " << rsaKeyPair.privateKey;
-        mTextEditResult->setPlainText(rsaKeyPair.publicKey + rsaKeyPair.privateKey);
+        mTextEditResult->setPlainText(QString::fromUtf8(rsaKeyPair.publicKey) + QString::fromUtf8(rsaKeyPair.privateKey));
     });
 
     auto pushButtonEncodePrivateKey = new QPushButton(QStringLiteral("Encode Private Key"), this);
     mainLayout->addWidget(pushButtonEncodePrivateKey);
-    connect(pushButtonEncodePrivateKey, &QPushButton::clicked, this, []() {
-        // test
+    connect(pushButtonEncodePrivateKey, &QPushButton::clicked, this, [this]() {
+        QByteArray privateKey = EncryptionUtils::generateRSAKey().privateKey;
+        QByteArray testKey = QStringLiteral("hello world test key").toUtf8();
+        auto encodedPrivateKey = EncryptionUtils::encodePrivateKey(testKey, QStringLiteral("root"), QStringLiteral("admin"));
+        qDebug() << encodedPrivateKey;
     });
     auto pushButtonDecodePrivateKey = new QPushButton(QStringLiteral("Decode Private Key"), this);
     mainLayout->addWidget(pushButtonDecodePrivateKey);

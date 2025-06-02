@@ -22,13 +22,13 @@ struct LIBRUQOLACORE_TESTS_EXPORT EncryptionInfo {
     [[nodiscard]] bool operator==(const EncryptionInfo &other) const;
 };
 struct RSAKeyPair {
-    QString publicKey;
-    QString privateKey;
+    QByteArray publicKey;
+    QByteArray privateKey;
 };
 
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray exportJWKKey(RSA *rsaKey);
 [[nondiscard]] LIBRUQOLACORE_TESTS_EXPORT RSAKeyPair generateRSAKey();
-[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QString encodePrivateKey(const QString &privateKey, const QString &password, const QString &userId);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encodePrivateKey(const QByteArray &privateKey, const QString &password, const QString &userId);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QString decodePrivateKey(const QString &privateKey, const QString &password, const QString &userId);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QString getMasterKey(const QString &password, const QString &userId);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv);

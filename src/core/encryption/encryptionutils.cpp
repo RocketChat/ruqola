@@ -110,8 +110,8 @@ EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
     BIO_get_mem_ptr(pubBio, &pubBuf);
     BIO_get_mem_ptr(privBio, &privBuf);
 
-    keyPair.publicKey = QString::fromUtf8(pubBuf->data, pubBuf->length);
-    keyPair.privateKey = QString::fromUtf8(privBuf->data, privBuf->length);
+    keyPair.publicKey = QByteArray(pubBuf->data, pubBuf->length);
+    keyPair.privateKey = QByteArray(privBuf->data, privBuf->length);
 
     // Libérer la mémoire
     // BIO_free_all(bp_public);
@@ -124,12 +124,23 @@ EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
     return keyPair;
 }
 
-QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QString &password, const QString &userId)
+QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const QString &password, const QString &userId)
 {
-    const QByteArray masterKey = QStringLiteral("qwertyuiopasdfgh").toUtf8();
+    const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
+
+    if (masterKey.size() != 32) {
+        qDebug() << masterKey;
+        return {};
+    }
+
     const QByteArray iv = generateRandomIV(16);
-    const QByteArray data = privateKey.toUtf8();
-    const QByteArray ciphertext = encryptAES_CBC(data, masterKey, iv);
+
+    if (privateKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Private key is empty";
+        return {};
+    }
+
+    const QByteArray ciphertext = encryptAES_CBC(privateKey, masterKey, iv);
 
     if (ciphertext.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encryption of the private key failed, cipherText is empty";
@@ -140,7 +151,7 @@ QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QStri
     encoded.append(iv);
     encoded.append(ciphertext);
 
-    return QString::fromUtf8(encoded);
+    return encoded.toBase64();
 }
 
 QString EncryptionUtils::decodePrivateKey(const QString &encoded, const QString &password, const QString &userId)
