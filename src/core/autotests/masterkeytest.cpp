@@ -45,13 +45,13 @@ void MasterKeyTest::masterKeyDeterminismTest()
 
 void MasterKeyTest::masterKeyEmptyPasswordTest()
 {
-    QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral(""), QStringLiteral("someUser"));
+    const QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral(""), QStringLiteral("someUser"));
     QVERIFY(masterKey.isEmpty());
 }
 
 void MasterKeyTest::masterKeyEmptyUserIdTest()
 {
-    QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral("somePassword"), QStringLiteral(""));
+    const QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral("somePassword"), QStringLiteral(""));
     QVERIFY(masterKey.isEmpty());
 }
 
