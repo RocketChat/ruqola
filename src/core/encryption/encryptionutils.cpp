@@ -104,11 +104,11 @@ void EncryptionUtils::generateRSAKey()
 
 QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QString &password, const QString &userId)
 {
-    const QString masterKey = getMasterKey(password, userId);
+    const QByteArray masterKey = getMasterKey(password, userId);
     return {};
 }
 
-QString EncryptionUtils::getMasterKey(const QString &password, const QString &userId)
+QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString &userId)
 {
     if (password.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Password can't be null. It's a bug";
@@ -132,7 +132,7 @@ QString EncryptionUtils::getMasterKey(const QString &password, const QString &us
         return {};
     }
 
-    return QString::fromUtf8(masterKey.toHex());
+    return masterKey.toBase64();
 
 #if 0
     async getMasterKey(password: string): Promise<void | CryptoKey> {
