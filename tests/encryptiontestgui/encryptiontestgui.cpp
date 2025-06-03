@@ -61,7 +61,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonGenerateRSAKey = new QPushButton(QStringLiteral("Generate RSA Pair"), this);
     mainLayout->addWidget(pushButtonGenerateRSAKey);
     connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, [this]() {
-        auto rsaKeyPair = EncryptionUtils::generateRSAKey();
+        const auto rsaKeyPair = EncryptionUtils::generateRSAKey();
         qDebug() << "Public Key: " << rsaKeyPair.publicKey << "Private Key: " << rsaKeyPair.privateKey;
         mTextEditResult->setPlainText(QString::fromUtf8(rsaKeyPair.publicKey) + QString::fromUtf8(rsaKeyPair.privateKey));
     });
@@ -69,8 +69,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonEncodePrivateKey = new QPushButton(QStringLiteral("Encode Private Key"), this);
     mainLayout->addWidget(pushButtonEncodePrivateKey);
     connect(pushButtonEncodePrivateKey, &QPushButton::clicked, this, [this]() {
-        QByteArray privateKey = EncryptionUtils::generateRSAKey().privateKey;
-        auto encodedPrivateKey = EncryptionUtils::encodePrivateKey(privateKey, QStringLiteral("root"), QStringLiteral("admin"));
+        const QByteArray privateKey = EncryptionUtils::generateRSAKey().privateKey;
+        const auto encodedPrivateKey = EncryptionUtils::encodePrivateKey(privateKey, QStringLiteral("root"), QStringLiteral("admin"));
         qDebug() << encodedPrivateKey;
     });
     auto pushButtonDecodePrivateKey = new QPushButton(QStringLiteral("Decode Private Key"), this);
