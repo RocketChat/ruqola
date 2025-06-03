@@ -29,8 +29,8 @@ MasterKeyTest::MasterKeyTest(QObject *parent)
  */
 void MasterKeyTest::masterKeyDeterminismTest()
 {
-    QString masterKey1;
-    QString masterKey2;
+    QByteArray masterKey1;
+    QByteArray masterKey2;
 
     for (int i = 0; i <= 10; i++) {
         masterKey1 = EncryptionUtils::getMasterKey(QStringLiteral("admin"), QStringLiteral("root"));
@@ -45,13 +45,13 @@ void MasterKeyTest::masterKeyDeterminismTest()
 
 void MasterKeyTest::masterKeyEmptyPasswordTest()
 {
-    const QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral(""), QStringLiteral("someUser"));
+    const QByteArray masterKey = EncryptionUtils::getMasterKey(QStringLiteral(""), QStringLiteral("someUser"));
     QVERIFY(masterKey.isEmpty());
 }
 
 void MasterKeyTest::masterKeyEmptyUserIdTest()
 {
-    const QString masterKey = EncryptionUtils::getMasterKey(QStringLiteral("somePassword"), QStringLiteral(""));
+    const QByteArray masterKey = EncryptionUtils::getMasterKey(QStringLiteral("somePassword"), QStringLiteral(""));
     QVERIFY(masterKey.isEmpty());
 }
 
