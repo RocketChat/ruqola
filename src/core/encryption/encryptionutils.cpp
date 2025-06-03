@@ -126,20 +126,13 @@ EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
 
 QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const QString &password, const QString &userId)
 {
-    const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
-
-    if (masterKey.size() != 32) {
-        qDebug() << masterKey;
-        return {};
-    }
-
-    const QByteArray iv = generateRandomIV(16);
-
     if (privateKey.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Private key is empty";
         return {};
     }
 
+    const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
+    const QByteArray iv = generateRandomIV(16);
     const QByteArray ciphertext = encryptAES_CBC(privateKey, masterKey, iv);
 
     if (ciphertext.isEmpty()) {
@@ -212,7 +205,9 @@ QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteAr
     EVP_CIPHER_CTX *ctx;
     int len;
     int ciphertext_len;
-    unsigned char ciphertext[128];
+
+    int max_out_len = data.size() + EVP_CIPHER_block_size(EVP_aes_256_cbc());
+    QByteArray cipherText(max_out_len, 0);
 
     if (!(ctx = EVP_CIPHER_CTX_new()))
         return {};
@@ -225,17 +220,22 @@ QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteAr
                               reinterpret_cast<const unsigned char *>(iv.data())))
         return {};
 
-    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, reinterpret_cast<const unsigned char *>(data.data()), data.size()))
+    if (1
+        != EVP_EncryptUpdate(ctx,
+                             reinterpret_cast<unsigned char *>(cipherText.data()),
+                             &len,
+                             reinterpret_cast<const unsigned char *>(data.data()),
+                             data.size()))
         return {};
     ciphertext_len = len;
 
-    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+    if (1 != EVP_EncryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(cipherText.data()) + len, &len))
         return {};
     ciphertext_len += len;
 
     EVP_CIPHER_CTX_free(ctx);
 
-    return QByteArray(reinterpret_cast<char *>(ciphertext), ciphertext_len);
+    return cipherText;
 }
 
 QByteArray EncryptionUtils::generateRandomIV(int size)
