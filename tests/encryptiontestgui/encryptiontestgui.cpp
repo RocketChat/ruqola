@@ -72,6 +72,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         const QByteArray privateKey = EncryptionUtils::generateRSAKey().privateKey;
         const auto encodedPrivateKey = EncryptionUtils::encodePrivateKey(privateKey, QStringLiteral("root"), QStringLiteral("admin"));
         qDebug() << encodedPrivateKey;
+        mTextEditResult->setPlainText(QString::fromUtf8(encodedPrivateKey));
     });
     auto pushButtonDecodePrivateKey = new QPushButton(QStringLiteral("Decode Private Key"), this);
     mainLayout->addWidget(pushButtonDecodePrivateKey);
