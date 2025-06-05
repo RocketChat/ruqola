@@ -69,15 +69,18 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonEncodePrivateKey = new QPushButton(QStringLiteral("Encode Private Key"), this);
     mainLayout->addWidget(pushButtonEncodePrivateKey);
     connect(pushButtonEncodePrivateKey, &QPushButton::clicked, this, [this]() {
-        const QByteArray privateKey = EncryptionUtils::generateRSAKey().privateKey;
-        const auto encodedPrivateKey = EncryptionUtils::encodePrivateKey(privateKey, QStringLiteral("root"), QStringLiteral("admin"));
-        qDebug() << encodedPrivateKey;
-        mTextEditResult->setPlainText(QString::fromUtf8(encodedPrivateKey));
+        mPrivateKey = EncryptionUtils::generateRSAKey().privateKey;
+        mEncodedPrivateKey = EncryptionUtils::encodePrivateKey(mPrivateKey, QStringLiteral("root"), QStringLiteral("admin"));
+        qDebug() << mEncodedPrivateKey.toBase64();
+        mTextEditResult->setPlainText(QString::fromUtf8(mEncodedPrivateKey.toBase64()));
     });
+
     auto pushButtonDecodePrivateKey = new QPushButton(QStringLiteral("Decode Private Key"), this);
     mainLayout->addWidget(pushButtonDecodePrivateKey);
-    connect(pushButtonDecodePrivateKey, &QPushButton::clicked, this, []() {
-        // test
+    connect(pushButtonDecodePrivateKey, &QPushButton::clicked, this, [this]() {
+        qDebug() << mEncodedPrivateKey.toBase64() << "encoded private key";
+        qDebug() << mEncodedPrivateKey.size() << "encoded private key size";
+        mDecodedPrivateKey = EncryptionUtils::decodePrivateKey(mEncodedPrivateKey);
     });
 
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);

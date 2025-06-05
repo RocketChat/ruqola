@@ -22,4 +22,7 @@ private:
     QByteArray mMasterKey = nullptr;
     QString password;
     QString userId;
+    QByteArray mEncodedPrivateKey = nullptr;
+    QByteArray mDecodedPrivateKey = nullptr;
+    QByteArray mPrivateKey = nullptr;
 };

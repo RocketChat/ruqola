@@ -144,13 +144,46 @@ QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const
     encoded.append(iv);
     encoded.append(ciphertext);
 
-    return encoded.toBase64();
+    return encoded;
 }
 
-QString EncryptionUtils::decodePrivateKey(const QString &encoded, const QString &password, const QString &userId)
+QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encoded)
 {
-    const QString masterKey = QStringLiteral("key");
-    return {};
+    if (encoded.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encoded private key is empty";
+        return {};
+    }
+
+    qDebug() << "decodePrivateKey: encoded.size() =" << encoded.size();
+    qDebug() << "decodePrivateKey: first 32 bytes (hex) =" << encoded.left(32).toHex();
+
+    const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
+    const QByteArray iv = encoded.left(16);
+    const QByteArray cipherText = encoded.mid(16);
+
+    qDebug() << "decodePrivateKey: iv.size() =" << iv.size();
+    qDebug() << "decodePrivateKey: cipherText.size() =" << cipherText.size();
+    qDebug() << "decodePrivateKey: iv (hex) =" << iv.toHex();
+    qDebug() << "decodePrivateKey: first 32 bytes of cipherText (hex) =" << cipherText.left(32).toHex();
+
+    if (iv.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Decryption of the private key failed, 'iv' is empty";
+        return {};
+    }
+    if (cipherText.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Decryption of the private key failed, 'cipherText' is empty";
+        return {};
+    }
+    /*
+    >>>>>>>>> ERROR HERE, plainText is empty
+    */
+    const QByteArray plainText = decryptAES_CBC(cipherText, masterKey, iv);
+
+    if (plainText.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Decryption of the cipherText failed, plainText is empty";
+        return {};
+    }
+    return plainText;
 }
 
 QString EncryptionUtils::getMasterKey(const QString &password, const QString &userId)
@@ -198,6 +231,50 @@ QString EncryptionUtils::getMasterKey(const QString &password, const QString &us
 
     // TODO
     return {};
+}
+
+QByteArray EncryptionUtils::decryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int plaintext_len;
+
+    QByteArray plaintext(data.size(), 0);
+
+    ctx = EVP_CIPHER_CTX_new();
+    if (!ctx)
+        return {};
+
+    if (1
+        != EVP_DecryptInit_ex(ctx,
+                              EVP_aes_256_cbc(),
+                              nullptr,
+                              reinterpret_cast<const unsigned char *>(key.data()),
+                              reinterpret_cast<const unsigned char *>(iv.data()))) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+
+    if (1
+        != EVP_DecryptUpdate(ctx,
+                             reinterpret_cast<unsigned char *>(plaintext.data()),
+                             &len,
+                             reinterpret_cast<const unsigned char *>(data.data()),
+                             data.size())) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    plaintext_len = len;
+
+    if (1 != EVP_DecryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(plaintext.data()) + len, &len)) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    plaintext_len += len;
+    plaintext.resize(plaintext_len);
+
+    EVP_CIPHER_CTX_free(ctx);
+    return plaintext;
 }
 
 QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
