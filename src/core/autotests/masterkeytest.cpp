@@ -6,8 +6,8 @@
 
 #include "masterkeytest.h"
 #include "encryption/encryptionutils.h"
-#include <QDebug>
 #include <QTest>
+
 QTEST_GUILESS_MAIN(MasterKeyTest)
 MasterKeyTest::MasterKeyTest(QObject *parent)
     : QObject(parent)
