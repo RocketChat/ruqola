@@ -78,8 +78,14 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(pushButtonDecodePrivateKey);
     connect(pushButtonDecodePrivateKey, &QPushButton::clicked, this, [this]() {
         mDecodedPrivateKey = EncryptionUtils::decodePrivateKey(mEncodedPrivateKey);
-        /*  qDebug() << mDecodedPrivateKey.toBase64() << "decoded private key '\n' ";
-         qDebug() << mRsaKeyPair.privateKey << "init private key '\n' "; */
+        qDebug() << mDecodedPrivateKey << "decoded private key '\n' ";
+        qDebug() << mRsaKeyPair.privateKey << "init private key '\n' ";
+
+        /* QString orig = QString::fromUtf8(mRsaKeyPair.privateKey).trimmed().replace("\r\n", "\n");
+        QString decoded = QString::fromUtf8(mDecodedPrivateKey).trimmed().replace("\r\n", "\n");
+        qDebug() << orig << "decoded private key '\n' ";
+        qDebug() << mRsaKeyPair.privateKey << "init private key '\n' "; */
+
         // mTextEditResult->setPlainText(QString::fromUtf8(mDecodedPrivateKey.toBase64()));
     });
 
