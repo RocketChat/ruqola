@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include "encryption/encryptionutils.h"
 #include <QWidget>
+
 class QTextEdit;
 class EncryptionTestGui : public QWidget
 {
@@ -24,5 +26,5 @@ private:
     QString userId;
     QByteArray mEncodedPrivateKey = nullptr;
     QByteArray mDecodedPrivateKey = nullptr;
-    QByteArray mPrivateKey = nullptr;
+    EncryptionUtils::RSAKeyPair mRsaKeyPair;
 };

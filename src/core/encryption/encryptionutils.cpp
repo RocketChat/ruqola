@@ -235,6 +235,7 @@ QString EncryptionUtils::getMasterKey(const QString &password, const QString &us
 
 QByteArray EncryptionUtils::decryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
 {
+    qDebug() << "decryptAES_CBC: data.size() =" << data.size() << "data.size() % 16 =" << (data.size() % 16);
     EVP_CIPHER_CTX *ctx;
     int len;
     int plaintext_len;
@@ -309,7 +310,7 @@ QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteAr
     if (1 != EVP_EncryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(cipherText.data()) + len, &len))
         return {};
     ciphertext_len += len;
-
+    cipherText.resize(ciphertext_len);
     EVP_CIPHER_CTX_free(ctx);
 
     return cipherText;
