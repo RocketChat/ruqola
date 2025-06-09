@@ -295,20 +295,26 @@ QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteAr
                               EVP_aes_256_cbc(),
                               NULL,
                               reinterpret_cast<const unsigned char *>(key.data()),
-                              reinterpret_cast<const unsigned char *>(iv.data())))
+                              reinterpret_cast<const unsigned char *>(iv.data()))) {
+        EVP_CIPHER_CTX_free(ctx);
         return {};
+    }
 
     if (1
         != EVP_EncryptUpdate(ctx,
                              reinterpret_cast<unsigned char *>(cipherText.data()),
                              &len,
                              reinterpret_cast<const unsigned char *>(data.data()),
-                             data.size()))
+                             data.size())) {
+        EVP_CIPHER_CTX_free(ctx);
         return {};
+    }
     ciphertext_len = len;
 
-    if (1 != EVP_EncryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(cipherText.data()) + len, &len))
+    if (1 != EVP_EncryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(cipherText.data()) + len, &len)) {
+        EVP_CIPHER_CTX_free(ctx);
         return {};
+    }
     ciphertext_len += len;
     cipherText.resize(ciphertext_len);
     EVP_CIPHER_CTX_free(ctx);
