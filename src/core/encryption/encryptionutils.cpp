@@ -128,11 +128,11 @@ QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString 
 
     const QByteArray masterKey = deriveKey(userId.toUtf8(), baseKey, 1000, 32);
     if (masterKey.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Failed to derive master key!";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Master key derivation failed!";
         return {};
     }
 
-    return masterKey.toBase64();
+    return masterKey;
 
 #if 0
     async getMasterKey(password: string): Promise<void | CryptoKey> {

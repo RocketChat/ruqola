@@ -55,11 +55,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             mUserId = userIdEdit->text();
             mPassword = passwordEdit->text();
             mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUserId);
-            qDebug() << "Derived Master Key:" << mMasterKey;
-            mTextEditResult->setPlainText(QStringLiteral("Master Key derived successfully!"));
-            mTextEditResult->setPlainText((QStringLiteral("Master Key derived successfully!") + QStringLiteral(" ") + QString::fromUtf8(mMasterKey)));
+            qDebug() << "Derived Master Key:" << mMasterKey.toBase64();
+            mTextEditResult->setPlainText((QStringLiteral("Master Key derivation succeeded!\n") + QString::fromUtf8(mMasterKey.toBase64())));
         }
-
         delete dialog;
     });
 
