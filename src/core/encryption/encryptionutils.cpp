@@ -124,14 +124,18 @@ EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
     return keyPair;
 }
 
-QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const QString &password, const QString &userId)
+QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const QByteArray &masterKey)
 {
     if (privateKey.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Private key is empty";
         return {};
     }
 
-    const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
+    if (masterKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Master key is empty";
+        return {};
+    }
+
     const QByteArray iv = generateRandomIV(16);
     const QByteArray ciphertext = encryptAES_CBC(privateKey, masterKey, iv);
 
@@ -147,17 +151,21 @@ QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const
     return encoded;
 }
 
-QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey)
+QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey, const QByteArray &masterKey)
 {
     if (encodedPrivateKey.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encoded private key is empty";
         return {};
     }
 
+    if (masterKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Master key is empty";
+        return {};
+    }
+
     qDebug() << "decodePrivateKey: encoded.size() =" << encodedPrivateKey.size();
     qDebug() << "decodePrivateKey: first 32 bytes (hex) =" << encodedPrivateKey.left(32).toHex();
 
-    const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
     const QByteArray iv = encodedPrivateKey.left(16);
     const QByteArray cipherText = encodedPrivateKey.mid(16);
 

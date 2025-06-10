@@ -1,10 +1,6 @@
 /*
    SPDX-FileCopyrightText: 2024-2025 Laurent Montel <montel@kde.org>
-<<<<<<< HEAD
-   SPDX-FileCopyrightText: 2025 Andro Ranogajec <montel@kde.org>
-=======
    SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
->>>>>>> gsoc2025
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */

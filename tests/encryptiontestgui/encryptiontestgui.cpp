@@ -65,7 +65,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(pushButtonGenerateRSAKey);
     connect(pushButtonGenerateRSAKey, &QPushButton::clicked, this, [this]() {
         mRsaKeyPair = EncryptionUtils::generateRSAKey();
-        qDebug() << "Public Key: " << mRsaKeyPair.publicKey << "Private Key: " << mRsaKeyPair.privateKey;
+        qDebug() << "Public Key:\n " << mRsaKeyPair.publicKey << "Private Key:\n " << mRsaKeyPair.privateKey;
         mTextEditResult->setPlainText(QStringLiteral("RSA pair generation succeded!\n") + QString::fromUtf8(mRsaKeyPair.publicKey)
                                       + QString::fromUtf8(mRsaKeyPair.privateKey));
     });
@@ -73,7 +73,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonEncodePrivateKey = new QPushButton(QStringLiteral("Encode Private Key"), this);
     mainLayout->addWidget(pushButtonEncodePrivateKey);
     connect(pushButtonEncodePrivateKey, &QPushButton::clicked, this, [this]() {
-        mEncodedPrivateKey = EncryptionUtils::encodePrivateKey(mRsaKeyPair.privateKey, QStringLiteral("root"), QStringLiteral("admin"));
+        mEncodedPrivateKey = EncryptionUtils::encodePrivateKey(mRsaKeyPair.privateKey, mMasterKey);
         qDebug() << mEncodedPrivateKey.toBase64() << "encoded private key ";
         mTextEditResult->setPlainText(QStringLiteral("Private key encryption succeded!\n") + QString::fromUtf8(mEncodedPrivateKey.toBase64()));
     });
@@ -81,7 +81,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonDecodePrivateKey = new QPushButton(QStringLiteral("Decode Private Key"), this);
     mainLayout->addWidget(pushButtonDecodePrivateKey);
     connect(pushButtonDecodePrivateKey, &QPushButton::clicked, this, [this]() {
-        mDecodedPrivateKey = EncryptionUtils::decodePrivateKey(mEncodedPrivateKey);
+        mDecodedPrivateKey = EncryptionUtils::decodePrivateKey(mEncodedPrivateKey, mMasterKey);
         mTextEditResult->setPlainText(QStringLiteral("Private key decryption succeded!\n") + QString::fromUtf8(mDecodedPrivateKey));
         qDebug() << mDecodedPrivateKey << "decoded private key '\n' ";
         qDebug() << mRsaKeyPair.privateKey << "init private key '\n' ";
