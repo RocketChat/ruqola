@@ -21,10 +21,10 @@ public:
 private:
     QTextEdit *const mTextEdit;
     QTextEdit *const mTextEditResult;
-    QByteArray mMasterKey = nullptr;
+    QByteArray mMasterKey;
     QString mPassword;
     QString mUserId;
-    QByteArray mEncodedPrivateKey = nullptr;
-    QByteArray mDecodedPrivateKey = nullptr;
+    QByteArray mEncodedPrivateKey;
+    QByteArray mDecodedPrivateKey;
     EncryptionUtils::RSAKeyPair mRsaKeyPair;
 };
