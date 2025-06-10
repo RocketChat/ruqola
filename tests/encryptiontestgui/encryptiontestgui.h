@@ -1,5 +1,6 @@
 /*
    SPDX-FileCopyrightText: 2024-2025 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -18,7 +19,7 @@ public:
 private:
     QTextEdit *const mTextEdit;
     QTextEdit *const mTextEditResult;
-    QByteArray mMasterKey = nullptr;
-    QString password;
-    QString userId;
+    QByteArray mMasterKey;
+    QString mPassword;
+    QString mUserId;
 };
