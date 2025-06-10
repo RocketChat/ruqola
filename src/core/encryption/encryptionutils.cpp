@@ -147,19 +147,19 @@ QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const
     return encoded;
 }
 
-QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encoded)
+QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey)
 {
-    if (encoded.isEmpty()) {
+    if (encodedPrivateKey.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encoded private key is empty";
         return {};
     }
 
-    qDebug() << "decodePrivateKey: encoded.size() =" << encoded.size();
-    qDebug() << "decodePrivateKey: first 32 bytes (hex) =" << encoded.left(32).toHex();
+    qDebug() << "decodePrivateKey: encoded.size() =" << encodedPrivateKey.size();
+    qDebug() << "decodePrivateKey: first 32 bytes (hex) =" << encodedPrivateKey.left(32).toHex();
 
     const QByteArray masterKey = QByteArray("qwertyuiopasdfghqwertyuiopasdfgh", 32);
-    const QByteArray iv = encoded.left(16);
-    const QByteArray cipherText = encoded.mid(16);
+    const QByteArray iv = encodedPrivateKey.left(16);
+    const QByteArray cipherText = encodedPrivateKey.mid(16);
 
     qDebug() << "decodePrivateKey: iv.size() =" << iv.size();
     qDebug() << "decodePrivateKey: cipherText.size() =" << cipherText.size();

@@ -29,7 +29,7 @@ struct RSAKeyPair {
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray exportJWKKey(RSA *rsaKey);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT RSAKeyPair generateRSAKey();
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encodePrivateKey(const QByteArray &privateKey, const QString &password, const QString &userId);
-[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decodePrivateKey(const QByteArray &encoded);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decodePrivateKey(const QByteArray &encodedPrivateKey);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray getMasterKey(const QString &password, const QString &userId);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv);
