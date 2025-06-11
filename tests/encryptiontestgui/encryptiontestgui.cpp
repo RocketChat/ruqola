@@ -85,13 +85,6 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         mTextEditResult->setPlainText(QStringLiteral("Private key decryption succeded!\n") + QString::fromUtf8(mDecodedPrivateKey));
         qDebug() << mDecodedPrivateKey << "decoded private key '\n' ";
         qDebug() << mRsaKeyPair.privateKey << "init private key '\n' ";
-
-        /* QString orig = QString::fromUtf8(mRsaKeyPair.privateKey).trimmed().replace("\r\n", "\n");
-        QString decoded = QString::fromUtf8(mDecodedPrivateKey).trimmed().replace("\r\n", "\n");
-        qDebug() << orig << "decoded private key '\n' ";
-        qDebug() << mRsaKeyPair.privateKey << "init private key '\n' "; */
-
-        // mTextEditResult->setPlainText(QString::fromUtf8(mDecodedPrivateKey.toBase64()));
     });
 
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);

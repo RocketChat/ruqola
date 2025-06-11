@@ -163,16 +163,8 @@ QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey
         return {};
     }
 
-    qDebug() << "decodePrivateKey: encoded.size() =" << encodedPrivateKey.size();
-    qDebug() << "decodePrivateKey: first 32 bytes (hex) =" << encodedPrivateKey.left(32).toHex();
-
     const QByteArray iv = encodedPrivateKey.left(16);
     const QByteArray cipherText = encodedPrivateKey.mid(16);
-
-    qDebug() << "decodePrivateKey: iv.size() =" << iv.size();
-    qDebug() << "decodePrivateKey: cipherText.size() =" << cipherText.size();
-    qDebug() << "decodePrivateKey: iv (hex) =" << iv.toHex();
-    qDebug() << "decodePrivateKey: first 32 bytes of cipherText (hex) =" << cipherText.left(32).toHex();
 
     if (iv.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Decryption of the private key failed, 'iv' is empty";
@@ -182,9 +174,7 @@ QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Decryption of the private key failed, 'cipherText' is empty";
         return {};
     }
-    /*
-    >>>>>>>>> ERROR HERE, plainText is empty
-    */
+
     const QByteArray plainText = decryptAES_CBC(cipherText, masterKey, iv);
 
     if (plainText.isEmpty()) {
@@ -250,7 +240,6 @@ QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString 
 
 QByteArray EncryptionUtils::decryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
 {
-    qDebug() << "decryptAES_CBC: data.size() =" << data.size() << "data.size() % 16 =" << (data.size() % 16);
     EVP_CIPHER_CTX *ctx;
     int len;
     int plaintext_len;
