@@ -22,4 +22,7 @@ private:
     QByteArray mMasterKey;
     QString mPassword;
     QString mUserId;
+    QByteArray mSessionKey;
+    QByteArray mEncryptedSessionKey;
+    QByteArray mDecryptedSessionKey;
 };

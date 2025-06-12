@@ -33,6 +33,11 @@ struct RSAKeyPair {
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray deriveKey(const QByteArray &salt, const QByteArray &baseKey, int iterations = 1000, int keyLength = 32);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray generateRandomIV(int size);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray generateSessionKey();
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptSessionKey(const QByteArray &sessionKey, RSA *publicKey);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decryptSessionKey(const QByteArray &encryptedSessionKey, RSA *privateKey);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT RSA *publicKeyFromPEM(const QByteArray &pem);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT RSA *privateKeyFromPEM(const QByteArray &pem);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QString generateRandomText(int size);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT EncryptionUtils::EncryptionInfo splitVectorAndEcryptedData(const QByteArray &cipherText);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray joinVectorAndEcryptedData(const EncryptionUtils::EncryptionInfo &info);

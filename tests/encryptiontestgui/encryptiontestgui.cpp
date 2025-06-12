@@ -68,12 +68,47 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         qDebug() << rsaKeyPair.publicKey;
         qDebug() << rsaKeyPair.privateKey;
     });
+
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);
     mainLayout->addWidget(pushButtonGenerateSessionKey);
-    connect(pushButtonGenerateSessionKey, &QPushButton::clicked, this, []() {
-        // test
+    connect(pushButtonGenerateSessionKey, &QPushButton::clicked, this, [this]() {
+        mSessionKey = EncryptionUtils::generateSessionKey();
+        qDebug() << "Derived Session Key:" << mSessionKey.toBase64();
+        mTextEditResult->setPlainText((QStringLiteral("Session key generation succeeded!\n") + QString::fromUtf8(mSessionKey.toBase64())));
     });
 
+    auto pushButtonEncryptSessionKey = new QPushButton(QStringLiteral("Encrypt Session Key"), this);
+    mainLayout->addWidget(pushButtonEncryptSessionKey);
+    connect(pushButtonEncryptSessionKey, &QPushButton::clicked, this, [this]() {
+        auto rsaPair = EncryptionUtils::generateRSAKey();
+        auto privateKey = rsaPair.privateKey.toUtf8();
+        auto publicKey = rsaPair.publicKey.toUtf8();
+
+        RSA *publicKeyfromPem = EncryptionUtils::publicKeyFromPEM(publicKey);
+        mEncryptedSessionKey = EncryptionUtils::encryptSessionKey(mSessionKey, publicKeyfromPem);
+
+        qDebug() << "Public Key from PEM:" << publicKeyfromPem;
+
+        qDebug() << "Encrypted Session Key:" << mEncryptedSessionKey.toBase64();
+        // mTextEditResult->setPlainText((QStringLiteral("Session key encryption succeeded!\n") + QString::fromUtf8(mEncryptedSessionKey.toBase64())));
+
+        RSA *privateKeyfromPem = EncryptionUtils::privateKeyFromPEM(privateKey);
+
+        qDebug() << "Private Key from PEM:" << privateKeyfromPem;
+        mDecryptedSessionKey = EncryptionUtils::decryptSessionKey(mEncryptedSessionKey, privateKeyfromPem);
+
+        qDebug() << "Decrypted Session Key:" << mDecryptedSessionKey.toBase64();
+
+        // mTextEditResult->setPlainText((QStringLiteral("Session key decryption succeeded!\n") + QString::fromUtf8(mDecryptedSessionKey.toBase64())));
+    });
+
+    auto pushButtonDecryptSessionKey = new QPushButton(QStringLiteral("Decrypt Session Key"), this);
+    mainLayout->addWidget(pushButtonDecryptSessionKey);
+    connect(pushButtonDecryptSessionKey, &QPushButton::clicked, this, [this]() {
+        mDecryptedSessionKey = EncryptionUtils::generateSessionKey();
+        qDebug() << "Decrypted Session Key:" << mDecryptedSessionKey.toBase64();
+        mTextEditResult->setPlainText((QStringLiteral("Session key decryption succeeded!\n") + QString::fromUtf8(mDecryptedSessionKey.toBase64())));
+    });
     auto pushButtonEncode = new QPushButton(QStringLiteral("Encode"), this);
     mainLayout->addWidget(pushButtonEncode);
     connect(pushButtonEncode, &QPushButton::clicked, this, []() {
