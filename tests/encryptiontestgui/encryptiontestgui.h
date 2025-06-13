@@ -8,6 +8,8 @@
 #pragma once
 
 #include <QWidget>
+#include <encryption/encryptionutils.h>
+
 class QTextEdit;
 class EncryptionTestGui : public QWidget
 {
@@ -22,6 +24,7 @@ private:
     QByteArray mMasterKey;
     QString mPassword;
     QString mUserId;
+    EncryptionUtils::RSAKeyPair mRsaKeyPair;
     QByteArray mSessionKey;
     QByteArray mEncryptedSessionKey;
     QByteArray mDecryptedSessionKey;
