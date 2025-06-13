@@ -167,6 +167,7 @@ add_ruqola_test(textconvertertest.cpp)
 if(USE_E2E_SUPPORT)
     add_ruqola_test(encryptionutilstest.cpp)
     add_ruqola_test(masterkeytest.cpp)
+    add_ruqola_test(sessionkeytest.cpp)
 endif()
 
 add_ruqola_test(channelstest.cpp)
