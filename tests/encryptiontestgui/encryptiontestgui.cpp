@@ -90,25 +90,25 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonGenerateSessionKey = new QPushButton(QStringLiteral("Generate Session Key"), this);
     mainLayout->addWidget(pushButtonGenerateSessionKey);
     connect(pushButtonGenerateSessionKey, &QPushButton::clicked, this, []() {
-        // test
+        // TODO
     });
 
     auto pushButtonEncodeMessage = new QPushButton(QStringLiteral("Encode Message"), this);
     mainLayout->addWidget(pushButtonEncodeMessage);
     connect(pushButtonEncodeMessage, &QPushButton::clicked, this, []() {
-        // test
+        // TODO
     });
 
     auto pushButtonDecodeMessage = new QPushButton(QStringLiteral("Decode Message"), this);
     mainLayout->addWidget(pushButtonDecodeMessage);
     connect(pushButtonDecodeMessage, &QPushButton::clicked, this, []() {
-        // test
+        // TODO
     });
 
     auto pushButtonReset = new QPushButton(QStringLiteral("Reset"), this);
     mainLayout->addWidget(pushButtonReset);
     connect(pushButtonReset, &QPushButton::clicked, this, []() {
-        // test
+        // TODO
     });
 
     mTextEditResult->setReadOnly(true);
