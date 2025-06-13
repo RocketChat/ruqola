@@ -18,5 +18,5 @@ public:
 
 private Q_SLOTS:
     void rsaPairGenerationNonDeterminismTest();
-    void encodeDecodeDeterminismTest();
+    void encryptDecryptDeterminismTest();
 };

@@ -24,7 +24,7 @@ private:
     QByteArray mMasterKey;
     QString mPassword;
     QString mUserId;
-    QByteArray mEncodedPrivateKey;
-    QByteArray mDecodedPrivateKey;
+    QByteArray mEncryptedPrivateKey;
+    QByteArray mDecryptedPrivateKey;
     EncryptionUtils::RSAKeyPair mRsaKeyPair;
 };

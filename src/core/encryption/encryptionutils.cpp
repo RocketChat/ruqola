@@ -124,7 +124,7 @@ EncryptionUtils::RSAKeyPair EncryptionUtils::generateRSAKey()
     return keyPair;
 }
 
-QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const QByteArray &masterKey)
+QByteArray EncryptionUtils::encryptPrivateKey(const QByteArray &privateKey, const QByteArray &masterKey)
 {
     if (privateKey.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Private key is empty";
@@ -144,17 +144,17 @@ QByteArray EncryptionUtils::encodePrivateKey(const QByteArray &privateKey, const
         return {};
     }
 
-    QByteArray encoded;
-    encoded.append(iv);
-    encoded.append(ciphertext);
+    QByteArray encrypted;
+    encrypted.append(iv);
+    encrypted.append(ciphertext);
 
-    return encoded;
+    return encrypted;
 }
 
-QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey, const QByteArray &masterKey)
+QByteArray EncryptionUtils::decryptPrivateKey(const QByteArray &encryptedPrivateKey, const QByteArray &masterKey)
 {
-    if (encodedPrivateKey.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encoded private key is empty";
+    if (encryptedPrivateKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encrypted private key is empty";
         return {};
     }
 
@@ -163,8 +163,8 @@ QByteArray EncryptionUtils::decodePrivateKey(const QByteArray &encodedPrivateKey
         return {};
     }
 
-    const QByteArray iv = encodedPrivateKey.left(16);
-    const QByteArray cipherText = encodedPrivateKey.mid(16);
+    const QByteArray iv = encryptedPrivateKey.left(16);
+    const QByteArray cipherText = encryptedPrivateKey.mid(16);
 
     if (iv.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Decryption of the private key failed, 'iv' is empty";
