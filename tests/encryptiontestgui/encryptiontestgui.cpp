@@ -106,12 +106,12 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             mTextEditResult->setPlainText((QStringLiteral("Session key decryption succeeded!\n") + QString::fromUtf8(mDecryptedSessionKey.toBase64())));
         }
     });
-    auto pushButtonEncode = new QPushButton(QStringLiteral("Encode"), this);
+    auto pushButtonEncode = new QPushButton(QStringLiteral("Encrypt message"), this);
     mainLayout->addWidget(pushButtonEncode);
     connect(pushButtonEncode, &QPushButton::clicked, this, []() {
-        // test
+
     });
-    auto pushButtonDecode = new QPushButton(QStringLiteral("Decode"), this);
+    auto pushButtonDecode = new QPushButton(QStringLiteral("Decrypt message"), this);
     mainLayout->addWidget(pushButtonDecode);
     connect(pushButtonDecode, &QPushButton::clicked, this, []() {
         // test

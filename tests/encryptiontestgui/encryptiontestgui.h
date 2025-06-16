@@ -28,4 +28,6 @@ private:
     QByteArray mSessionKey;
     QByteArray mEncryptedSessionKey;
     QByteArray mDecryptedSessionKey;
+    QByteArray mEncryptedMessage;
+    QByteArray mDecryptedMessage;
 };
