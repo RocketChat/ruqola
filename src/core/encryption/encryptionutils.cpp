@@ -184,37 +184,6 @@ QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString 
 #endif
 }
 
-QByteArray EncryptionUtils::encryptAES_CBC(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
-{
-    EVP_CIPHER_CTX *ctx;
-    int len;
-    int ciphertext_len;
-    unsigned char ciphertext[128];
-
-    if (!(ctx = EVP_CIPHER_CTX_new()))
-        return {};
-
-    if (1
-        != EVP_EncryptInit_ex(ctx,
-                              EVP_aes_256_cbc(),
-                              NULL,
-                              reinterpret_cast<const unsigned char *>(key.data()),
-                              reinterpret_cast<const unsigned char *>(iv.data())))
-        return {};
-
-    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, reinterpret_cast<const unsigned char *>(data.data()), data.size()))
-        return {};
-    ciphertext_len = len;
-
-    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
-        return {};
-    ciphertext_len += len;
-
-    EVP_CIPHER_CTX_free(ctx);
-
-    return QByteArray(reinterpret_cast<char *>(ciphertext), ciphertext_len);
-}
-
 QByteArray EncryptionUtils::generateSessionKey()
 {
     return generateRandomIV(16);
@@ -287,6 +256,186 @@ QByteArray EncryptionUtils::decryptSessionKey(const QByteArray &encryptedSession
     }
     decryptedSessionKey.resize(bytes);
     return decryptedSessionKey;
+}
+
+QByteArray EncryptionUtils::decryptAES_CBC_256(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int plaintext_len;
+
+    QByteArray plaintext(data.size(), 0);
+
+    ctx = EVP_CIPHER_CTX_new();
+    if (!ctx)
+        return {};
+
+    if (1
+        != EVP_DecryptInit_ex(ctx,
+                              EVP_aes_256_cbc(),
+                              nullptr,
+                              reinterpret_cast<const unsigned char *>(key.data()),
+                              reinterpret_cast<const unsigned char *>(iv.data()))) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+
+    if (1
+        != EVP_DecryptUpdate(ctx,
+                             reinterpret_cast<unsigned char *>(plaintext.data()),
+                             &len,
+                             reinterpret_cast<const unsigned char *>(data.data()),
+                             data.size())) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    plaintext_len = len;
+
+    if (1 != EVP_DecryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(plaintext.data()) + len, &len)) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    plaintext_len += len;
+    plaintext.resize(plaintext_len);
+
+    EVP_CIPHER_CTX_free(ctx);
+    return plaintext;
+}
+
+QByteArray EncryptionUtils::encryptAES_CBC_256(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int ciphertext_len;
+
+    int max_out_len = data.size() + EVP_CIPHER_block_size(EVP_aes_256_cbc());
+    QByteArray cipherText(max_out_len, 0);
+
+    if (!(ctx = EVP_CIPHER_CTX_new()))
+        return {};
+
+    if (1
+        != EVP_EncryptInit_ex(ctx,
+                              EVP_aes_256_cbc(),
+                              NULL,
+                              reinterpret_cast<const unsigned char *>(key.data()),
+                              reinterpret_cast<const unsigned char *>(iv.data()))) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+
+    if (1
+        != EVP_EncryptUpdate(ctx,
+                             reinterpret_cast<unsigned char *>(cipherText.data()),
+                             &len,
+                             reinterpret_cast<const unsigned char *>(data.data()),
+                             data.size())) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    ciphertext_len = len;
+
+    if (1 != EVP_EncryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(cipherText.data()) + len, &len)) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    ciphertext_len += len;
+    cipherText.resize(ciphertext_len);
+    EVP_CIPHER_CTX_free(ctx);
+
+    return cipherText;
+}
+
+QByteArray EncryptionUtils::encryptAES_CBC_128(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
+{
+    if (key.size() != 16) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Session key must be 16 bytes for AES-128";
+        return {};
+    }
+
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int ciphertext_len;
+
+    int max_out_len = data.size() + EVP_CIPHER_block_size(EVP_aes_128_cbc());
+    QByteArray cipherText(max_out_len, 0);
+
+    if (!(ctx = EVP_CIPHER_CTX_new()))
+        return {};
+
+    if (1
+        != EVP_EncryptInit_ex(ctx,
+                              EVP_aes_128_cbc(),
+                              NULL,
+                              reinterpret_cast<const unsigned char *>(key.data()),
+                              reinterpret_cast<const unsigned char *>(iv.data()))) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+
+    if (1
+        != EVP_EncryptUpdate(ctx,
+                             reinterpret_cast<unsigned char *>(cipherText.data()),
+                             &len,
+                             reinterpret_cast<const unsigned char *>(data.data()),
+                             data.size())) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    ciphertext_len = len;
+
+    if (1 != EVP_EncryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(cipherText.data()) + len, &len)) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    ciphertext_len += len;
+    cipherText.resize(ciphertext_len);
+    EVP_CIPHER_CTX_free(ctx);
+
+    return cipherText;
+}
+
+QByteArray EncryptionUtils::decryptAES_CBC_128(const QByteArray &cipherText, const QByteArray &key, const QByteArray &iv)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int plainTextLen;
+
+    QByteArray plainText(cipherText.size(), 0);
+
+    if (!(ctx = EVP_CIPHER_CTX_new()))
+        return {};
+
+    if (1
+        != EVP_DecryptInit_ex(ctx,
+                              EVP_aes_128_cbc(),
+                              NULL,
+                              reinterpret_cast<const unsigned char *>(key.data()),
+                              reinterpret_cast<const unsigned char *>(iv.data()))) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+
+    if (1
+        != EVP_DecryptUpdate(ctx,
+                             reinterpret_cast<unsigned char *>(plainText.data()),
+                             &len,
+                             reinterpret_cast<const unsigned char *>(cipherText.data()),
+                             cipherText.size())) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    plainTextLen = len;
+
+    if (1 != EVP_DecryptFinal_ex(ctx, reinterpret_cast<unsigned char *>(plainText.data()) + len, &len)) {
+        EVP_CIPHER_CTX_free(ctx);
+        return {};
+    }
+    plainTextLen += len;
+    plainText.resize(plainTextLen);
+    EVP_CIPHER_CTX_free(ctx);
+
+    return plainText;
 }
 
 QByteArray EncryptionUtils::generateRandomIV(int size)
