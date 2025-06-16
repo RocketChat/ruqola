@@ -34,6 +34,8 @@ struct RSAKeyPair {
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decryptAES_CBC_256(const QByteArray &data, const QByteArray &key, const QByteArray &iv);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptAES_CBC_128(const QByteArray &data, const QByteArray &key, const QByteArray &iv);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decryptAES_CBC_128(const QByteArray &data, const QByteArray &key, const QByteArray &iv);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray encryptMessage(const QByteArray &plainText, const QByteArray &sessionKey);
+[[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray decryptMessage(const QByteArray &plainText, const QByteArray &sessionKey);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray deriveKey(const QByteArray &salt, const QByteArray &baseKey, int iterations = 1000, int keyLength = 32);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray generateRandomIV(int size);
 [[nodiscard]] LIBRUQOLACORE_TESTS_EXPORT QByteArray generateSessionKey();

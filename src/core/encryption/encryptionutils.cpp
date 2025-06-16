@@ -258,6 +258,55 @@ QByteArray EncryptionUtils::decryptSessionKey(const QByteArray &encryptedSession
     return decryptedSessionKey;
 }
 
+QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QByteArray &sessionKey)
+{
+    if (plainText.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Plaintext is empty";
+        return {};
+    }
+    if (sessionKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Session key is empty";
+        return {};
+    }
+
+    QByteArray iv = generateRandomIV(16);
+    QByteArray cipherText = encryptAES_CBC_128(plainText, sessionKey, iv);
+
+    if (cipherText.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Message encryption failed!";
+        return {};
+    }
+
+    QByteArray result;
+    result.append(iv);
+    result.append(cipherText);
+    return result;
+}
+
+QByteArray EncryptionUtils::decryptMessage(const QByteArray &encrypted, const QByteArray &sessionKey)
+{
+    if (encrypted.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encrypted message is empty";
+        return {};
+    }
+    if (sessionKey.size()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Session key is empty";
+        return {};
+    }
+
+    QByteArray iv = encrypted.left(16);
+    QByteArray cipherText = encrypted.mid(16);
+
+    QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);
+
+    if (plainText.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Message decryption failed!";
+        return {};
+    }
+
+    return plainText;
+}
+
 QByteArray EncryptionUtils::decryptAES_CBC_256(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
 {
     EVP_CIPHER_CTX *ctx;
@@ -348,11 +397,6 @@ QByteArray EncryptionUtils::encryptAES_CBC_256(const QByteArray &data, const QBy
 
 QByteArray EncryptionUtils::encryptAES_CBC_128(const QByteArray &data, const QByteArray &key, const QByteArray &iv)
 {
-    if (key.size() != 16) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Session key must be 16 bytes for AES-128";
-        return {};
-    }
-
     EVP_CIPHER_CTX *ctx;
     int len;
     int ciphertext_len;
