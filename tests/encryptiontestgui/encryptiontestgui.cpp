@@ -109,9 +109,15 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonEncode = new QPushButton(QStringLiteral("Encrypt message"), this);
     mainLayout->addWidget(pushButtonEncode);
     connect(pushButtonEncode, &QPushButton::clicked, this, [this]() {
-        mEncryptedMessage = EncryptionUtils::encryptMessage(QStringLiteral("This is GSoC 2025!").toUtf8(), mSessionKey);
-        qDebug() << "Encrypted message:" << mEncryptedMessage.toBase64();
-        mTextEditResult->setPlainText((QStringLiteral("Message encryption succeeded!\n") + QString::fromUtf8(mEncryptedMessage.toBase64())));
+        const auto text = mTextEdit->toPlainText();
+        if (text.isEmpty()) {
+            mTextEditResult->setPlainText((QStringLiteral("Text cannot be null, message encryption failed!\n") + text));
+        } else {
+            mEncryptedMessage = EncryptionUtils::encryptMessage(text.toUtf8(), mSessionKey);
+            qDebug() << "Encrypted message:" << mEncryptedMessage.toBase64();
+            mTextEditResult->setPlainText((QStringLiteral("Message encryption succeeded!\n") + QString::fromUtf8(mEncryptedMessage.toBase64())));
+            mTextEdit->clear();
+        }
     });
     auto pushButtonDecode = new QPushButton(QStringLiteral("Decrypt message"), this);
     mainLayout->addWidget(pushButtonDecode);
