@@ -261,11 +261,11 @@ QByteArray EncryptionUtils::decryptSessionKey(const QByteArray &encryptedSession
 QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QByteArray &sessionKey)
 {
     if (plainText.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Plaintext is empty";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::encryptMessage, plaintext is empty!";
         return {};
     }
     if (sessionKey.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Session key is empty";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::encryptMessage, session key is empty!";
         return {};
     }
 
@@ -273,7 +273,7 @@ QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QB
     QByteArray cipherText = encryptAES_CBC_128(plainText, sessionKey, iv);
 
     if (cipherText.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Message encryption failed!";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::encryptMessage, message encryption failed!";
         return {};
     }
 
@@ -286,11 +286,11 @@ QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QB
 QByteArray EncryptionUtils::decryptMessage(const QByteArray &encrypted, const QByteArray &sessionKey)
 {
     if (encrypted.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Encrypted message is empty";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, encrypted message is empty!";
         return {};
     }
-    if (sessionKey.size()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Session key is empty";
+    if (sessionKey.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, mession key is empty!";
         return {};
     }
 
@@ -300,7 +300,7 @@ QByteArray EncryptionUtils::decryptMessage(const QByteArray &encrypted, const QB
     QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);
 
     if (plainText.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Message decryption failed!";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, message decryption failed!";
         return {};
     }
 

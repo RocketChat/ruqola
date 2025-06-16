@@ -108,19 +108,23 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     });
     auto pushButtonEncode = new QPushButton(QStringLiteral("Encrypt message"), this);
     mainLayout->addWidget(pushButtonEncode);
-    connect(pushButtonEncode, &QPushButton::clicked, this, []() {
-
+    connect(pushButtonEncode, &QPushButton::clicked, this, [this]() {
+        mEncryptedMessage = EncryptionUtils::encryptMessage(QStringLiteral("This is GSoC 2025!").toUtf8(), mSessionKey);
+        qDebug() << "Encrypted message:" << mEncryptedMessage.toBase64();
     });
     auto pushButtonDecode = new QPushButton(QStringLiteral("Decrypt message"), this);
     mainLayout->addWidget(pushButtonDecode);
-    connect(pushButtonDecode, &QPushButton::clicked, this, []() {
-        // test
+    connect(pushButtonDecode, &QPushButton::clicked, this, [this]() {
+        qDebug() << "Session key:" << mSessionKey;
+        mDecryptedMessage = EncryptionUtils::decryptMessage(mEncryptedMessage, mSessionKey);
+        qDebug() << "Decrypted message:" << mDecryptedMessage;
+        qDebug() << "Init message: " << "This is GSoC 2025!";
     });
 
     auto pushButtonReset = new QPushButton(QStringLiteral("Reset"), this);
     mainLayout->addWidget(pushButtonReset);
     connect(pushButtonReset, &QPushButton::clicked, this, []() {
-        EncryptionUtils::generateRSAKey();
+        // TODO
     });
 
     mTextEditResult->setReadOnly(true);
