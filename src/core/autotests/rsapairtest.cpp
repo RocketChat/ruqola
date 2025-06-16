@@ -50,36 +50,20 @@ void RsaPairTest::rsaPairGenerationNonDeterminismTest()
  */
 void RsaPairTest::encryptDecryptDeterminismTest()
 {
-    EncryptionUtils::RSAKeyPair rsaPair1;
-    EncryptionUtils::RSAKeyPair rsaPair2;
-
-    QByteArray privateKey1;
-    QByteArray privateKey2;
-
+    EncryptionUtils::RSAKeyPair rsaPair;
+    QByteArray privateKey;
     QByteArray masterKey;
-
-    QByteArray encryptedPrivateKey1;
-    QByteArray encryptedPrivateKey2;
-    QByteArray decryptedPrivateKey1;
-    QByteArray decryptedPrivateKey2;
+    QByteArray encryptedPrivateKey;
+    QByteArray decryptedPrivateKey;
 
     for (int i = 0; i <= 10; i++) {
-        rsaPair1 = EncryptionUtils::generateRSAKey();
-        rsaPair2 = EncryptionUtils::generateRSAKey();
-
-        privateKey1 = rsaPair1.privateKey;
-        privateKey2 = rsaPair2.privateKey;
-
+        rsaPair = EncryptionUtils::generateRSAKey();
+        privateKey = rsaPair.privateKey;
         masterKey = EncryptionUtils::getMasterKey(EncryptionUtils::generateRandomText(32), EncryptionUtils::generateRandomText(32));
+        encryptedPrivateKey = EncryptionUtils::encryptPrivateKey(rsaPair.privateKey, masterKey);
+        decryptedPrivateKey = EncryptionUtils::decryptPrivateKey(encryptedPrivateKey, masterKey);
 
-        encryptedPrivateKey1 = EncryptionUtils::encryptPrivateKey(rsaPair1.privateKey, masterKey);
-        encryptedPrivateKey2 = EncryptionUtils::decryptPrivateKey(rsaPair2.privateKey, masterKey);
-
-        decryptedPrivateKey1 = EncryptionUtils::decryptPrivateKey(encryptedPrivateKey1, masterKey);
-        decryptedPrivateKey2 = EncryptionUtils::decryptPrivateKey(encryptedPrivateKey2, masterKey);
-
-        QVERIFY(decryptedPrivateKey1 == privateKey1);
-        QVERIFY(decryptedPrivateKey2 == privateKey2);
+        QVERIFY(decryptedPrivateKey == privateKey);
     }
 }
 
