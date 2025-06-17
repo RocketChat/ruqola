@@ -130,6 +130,17 @@ QString EncryptionUtils::encodePrivateKey(const QString &privateKey, const QStri
     return {};
 }
 
+/**
+ * @brief Derives the master key from the user's password and user ID.
+ *
+ * This function uses a password-based key derivation function (PBKDF2) to generate
+ * a 256-bit (32-byte) AES master key from the provided password and user ID.
+ * The master key is used to encrypt and decrypt the user's private RSA key.
+ *
+ * @param password The user's E2EE password.
+ * @param userId The user's unique identifier (used as salt).
+ * @return A 32-byte (256-bit) master key as a QByteArray, or an empty QByteArray on failure.
+ */
 QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString &userId)
 {
     if (password.isEmpty()) {
@@ -258,6 +269,12 @@ QByteArray EncryptionUtils::decryptSessionKey(const QByteArray &encryptedSession
     return decryptedSessionKey;
 }
 
+/**
+ * @brief Encrypts a message using AES-128-CBC.
+ * @param plainText The message to encrypt.
+ * @param sessionKey The 16-byte session key.
+ * @return The IV prepended to the ciphertext.
+ */
 QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QByteArray &sessionKey)
 {
     if (plainText.isEmpty()) {
@@ -283,6 +300,12 @@ QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QB
     return result;
 }
 
+/**
+ * @brief Decrypts a message using AES-128-CBC.
+ * @param encrypted The message to decrypt.
+ * @param sessionKey The 16-byte session key.
+ * @return The decrypted message.
+ */
 QByteArray EncryptionUtils::decryptMessage(const QByteArray &encrypted, const QByteArray &sessionKey)
 {
     if (encrypted.isEmpty()) {

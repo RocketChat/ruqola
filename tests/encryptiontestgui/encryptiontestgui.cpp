@@ -125,7 +125,6 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         qDebug() << "Session key:" << mSessionKey;
         mDecryptedMessage = EncryptionUtils::decryptMessage(mEncryptedMessage, mSessionKey);
         qDebug() << "Decrypted message:" << mDecryptedMessage;
-        qDebug() << "Init message: " << "This is GSoC 2025!";
         mTextEditResult->setPlainText((QStringLiteral("Message decryption succeeded!\n") + QString::fromUtf8(mDecryptedMessage)));
     });
 
