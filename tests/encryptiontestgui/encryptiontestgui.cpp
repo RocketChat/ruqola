@@ -40,7 +40,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         passwordEdit->setEchoMode(QLineEdit::Password);
 
         auto *layout = new QGridLayout(dialog);
-        layout->addWidget(new QLabel(QStringLiteral("UserId: "), dialog), 0, 0);
+        layout->addWidget(new QLabel(QStringLiteral("Username: "), dialog), 0, 0);
         layout->addWidget(userIdEdit, 0, 1);
         layout->addWidget(new QLabel(QStringLiteral("Password: "), dialog), 1, 0);
         layout->addWidget(passwordEdit, 1, 1);
@@ -52,9 +52,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
 
         if (dialog->exec()) {
-            mUserId = userIdEdit->text();
+            mUsername = userIdEdit->text();
             mPassword = passwordEdit->text();
-            mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUserId);
+            mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUsername);
             qDebug() << "Derived Master Key:" << mMasterKey.toBase64();
             mTextEditResult->setPlainText((QStringLiteral("Master Key derivation succeeded!\n") + QString::fromUtf8(mMasterKey.toBase64())));
         }
@@ -106,9 +106,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             mTextEditResult->setPlainText((QStringLiteral("Session key decryption succeeded!\n") + QString::fromUtf8(mDecryptedSessionKey.toBase64())));
         }
     });
-    auto pushButtonEncode = new QPushButton(QStringLiteral("Encrypt message"), this);
-    mainLayout->addWidget(pushButtonEncode);
-    connect(pushButtonEncode, &QPushButton::clicked, this, [this]() {
+    auto pushButtonEncrypt = new QPushButton(QStringLiteral("Encrypt message"), this);
+    mainLayout->addWidget(pushButtonEncrypt);
+    connect(pushButtonEncrypt, &QPushButton::clicked, this, [this]() {
         const auto text = mTextEdit->toPlainText();
         if (text.isEmpty()) {
             mTextEditResult->setPlainText((QStringLiteral("Text cannot be null, message encryption failed!\n")));
@@ -119,9 +119,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             mTextEdit->clear();
         }
     });
-    auto pushButtonDecode = new QPushButton(QStringLiteral("Decrypt message"), this);
-    mainLayout->addWidget(pushButtonDecode);
-    connect(pushButtonDecode, &QPushButton::clicked, this, [this]() {
+    auto pushButtonDecrypt = new QPushButton(QStringLiteral("Decrypt message"), this);
+    mainLayout->addWidget(pushButtonDecrypt);
+    connect(pushButtonDecrypt, &QPushButton::clicked, this, [this]() {
         qDebug() << "Session key:" << mSessionKey;
         if (QString::fromUtf8(mEncryptedMessage).isEmpty()) {
             mTextEditResult->setPlainText((QStringLiteral("Encrypted message is null, message decryption failed!\n")));
@@ -134,8 +134,24 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
 
     auto pushButtonReset = new QPushButton(QStringLiteral("Reset"), this);
     mainLayout->addWidget(pushButtonReset);
-    connect(pushButtonReset, &QPushButton::clicked, this, []() {
-        // TODO
+    connect(pushButtonReset, &QPushButton::clicked, this, [this]() {
+        mTextEdit->clear();
+        mTextEditResult->clear();
+        mMasterKey.clear();
+        mPassword = QStringLiteral("");
+        mUsername = QStringLiteral("");
+        mRsaKeyPair.privateKey.clear();
+        mRsaKeyPair.publicKey.clear();
+        mSessionKey.clear();
+        mEncryptedSessionKey.clear();
+        mDecryptedSessionKey.clear();
+        mEncryptedMessage.clear();
+        mDecryptedMessage.clear();
+        qDebug() << "Master Key: " << mMasterKey << "\nusername: " << mUsername << "\npassword: " << mPassword << "\nprivatekey: " << mRsaKeyPair.privateKey
+                 << "\npublickey: " << mRsaKeyPair.publicKey << "\nencrypted session key: " << mEncryptedSessionKey
+                 << "\ndecrypted session key: " << mDecryptedSessionKey << "\nencrypted message: " << mEncryptedMessage
+                 << "\ndecrypted message: " << mDecryptedMessage;
+        mTextEditResult->setPlainText((QStringLiteral("Reset succeded!\n")));
     });
 
     mTextEditResult->setReadOnly(true);

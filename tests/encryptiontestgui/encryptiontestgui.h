@@ -23,7 +23,7 @@ private:
     QTextEdit *const mTextEditResult;
     QByteArray mMasterKey;
     QString mPassword;
-    QString mUserId;
+    QString mUsername;
     EncryptionUtils::RSAKeyPair mRsaKeyPair;
     QByteArray mSessionKey;
     QByteArray mEncryptedSessionKey;
