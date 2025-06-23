@@ -111,7 +111,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     connect(pushButtonEncode, &QPushButton::clicked, this, [this]() {
         const auto text = mTextEdit->toPlainText();
         if (text.isEmpty()) {
-            mTextEditResult->setPlainText((QStringLiteral("Text cannot be null, message encryption failed!\n") + text));
+            mTextEditResult->setPlainText((QStringLiteral("Text cannot be null, message encryption failed!\n")));
         } else {
             mEncryptedMessage = EncryptionUtils::encryptMessage(text.toUtf8(), mSessionKey);
             qDebug() << "Encrypted message:" << mEncryptedMessage.toBase64();
@@ -123,6 +123,10 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(pushButtonDecode);
     connect(pushButtonDecode, &QPushButton::clicked, this, [this]() {
         qDebug() << "Session key:" << mSessionKey;
+        if (QString::fromUtf8(mEncryptedMessage).isEmpty()) {
+            mTextEditResult->setPlainText((QStringLiteral("Encrypted message is null, message decryption failed!\n")));
+            return;
+        }
         mDecryptedMessage = EncryptionUtils::decryptMessage(mEncryptedMessage, mSessionKey);
         qDebug() << "Decrypted message:" << mDecryptedMessage;
         mTextEditResult->setPlainText((QStringLiteral("Message decryption succeeded!\n") + QString::fromUtf8(mDecryptedMessage)));
