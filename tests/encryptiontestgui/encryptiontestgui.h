@@ -27,4 +27,7 @@ private:
     QByteArray mEncryptedPrivateKey;
     QByteArray mDecryptedPrivateKey;
     EncryptionUtils::RSAKeyPair mRsaKeyPair;
+    QByteArray mSessionKey;
+    QByteArray mEncryptedSessionKey;
+    QByteArray mDecryptedSessionKey;
 };
