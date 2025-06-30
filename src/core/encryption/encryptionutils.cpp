@@ -192,28 +192,22 @@ QByteArray EncryptionUtils::decryptPrivateKey(const QByteArray &encryptedPrivate
  * The master key is used to encrypt and decrypt the user's private RSA key.
  *
  * @param password The user's E2EE password.
- * @param userId The user's unique identifier (used as salt).
+ * @param salt user's unique identifier (used as salt).
  * @return A 32-byte (256-bit) master key as a QByteArray, or an empty QByteArray on failure.
  */
-QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString &userId)
+QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString &salt)
 {
     if (password.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Password can't be null. It's a bug";
         return {};
     }
 
-    if (userId.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "UserId can't be null. It's a bug";
+    if (salt.isEmpty()) {
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Salt(username) can't be null. It's a bug";
         return {};
     }
 
-    const QByteArray baseKey = importRawKey(password.toUtf8(), userId.toUtf8(), 1000);
-    if (baseKey.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "Failed to derive base key from password!";
-        return {};
-    }
-
-    const QByteArray masterKey = deriveKey(userId.toUtf8(), baseKey, 1000, 32);
+    const QByteArray masterKey = deriveKey(salt.toUtf8(), password.toUtf8(), 1000, 32);
     if (masterKey.isEmpty()) {
         qCWarning(RUQOLA_ENCRYPTION_LOG) << "Master key derivation failed!";
         return {};
@@ -344,7 +338,7 @@ QByteArray EncryptionUtils::encryptMessage(const QByteArray &plainText, const QB
     QByteArray cipherText = encryptAES_CBC_128(plainText, sessionKey, iv);
 
     if (cipherText.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::encryptMessage, message encryption failed!";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::encryptMessage, message encryption failed, cipher text is empty!";
         return {};
     }
 
@@ -367,17 +361,21 @@ QByteArray EncryptionUtils::decryptMessage(const QByteArray &encrypted, const QB
         return {};
     }
     if (sessionKey.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, mession key is empty!";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, session key is empty!";
         return {};
     }
 
     QByteArray iv = encrypted.left(16);
     QByteArray cipherText = encrypted.mid(16);
 
+    qDebug() << cipherText << "QByteArray cipherText = encrypted.mid(16)";
+
     QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);
 
+    qDebug() << plainText << "QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);";
+
     if (plainText.isEmpty()) {
-        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, message decryption failed!";
+        qCWarning(RUQOLA_ENCRYPTION_LOG) << "QByteArray EncryptionUtils::decryptMessage, message decryption failed, plain text is empty";
         return {};
     }
 

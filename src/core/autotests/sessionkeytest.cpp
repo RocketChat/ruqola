@@ -32,8 +32,8 @@ void SessionKeyTest::sessionKeyEncryptionDecryptionTest()
     QByteArray encryptedSessionKey;
     QByteArray decryptedSessionKey;
     auto rsaKeyPair = EncryptionUtils::generateRSAKey();
-    auto privateKey = rsaKeyPair.privateKey.toUtf8();
-    auto publicKey = rsaKeyPair.publicKey.toUtf8();
+    auto privateKey = rsaKeyPair.privateKey;
+    auto publicKey = rsaKeyPair.publicKey;
 
     for (int i = 0; i <= 10; i++) {
         sessionKey = EncryptionUtils::generateSessionKey();

@@ -35,13 +35,13 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         auto *dialog = new QDialog(this);
         dialog->setWindowTitle(QStringLiteral("Credentials"));
 
-        auto *userIdEdit = new QLineEdit(dialog);
+        auto *saltEdit = new QLineEdit(dialog);
         auto *passwordEdit = new QLineEdit(dialog);
         passwordEdit->setEchoMode(QLineEdit::Password);
 
         auto *layout = new QGridLayout(dialog);
-        layout->addWidget(new QLabel(QStringLiteral("Username: "), dialog), 0, 0);
-        layout->addWidget(userIdEdit, 0, 1);
+        layout->addWidget(new QLabel(QStringLiteral("Salt: "), dialog), 0, 0);
+        layout->addWidget(saltEdit, 0, 1);
         layout->addWidget(new QLabel(QStringLiteral("Password: "), dialog), 1, 0);
         layout->addWidget(passwordEdit, 1, 1);
 
@@ -52,9 +52,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
 
         if (dialog->exec()) {
-            mUsername = userIdEdit->text();
+            mSalt = saltEdit->text();
             mPassword = passwordEdit->text();
-            mMasterKey = EncryptionUtils::getMasterKey(mPassword, mUsername);
+            mMasterKey = EncryptionUtils::getMasterKey(mPassword, mSalt);
 
             if (mMasterKey.isEmpty())
                 mTextEditResult->setPlainText(QStringLiteral("Master key is empty, generation failed!"));
@@ -174,7 +174,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         mTextEditResult->clear();
         mMasterKey.clear();
         mPassword = QStringLiteral("");
-        mUsername = QStringLiteral("");
+        mSalt = QStringLiteral("");
         mRsaKeyPair.privateKey.clear();
         mRsaKeyPair.publicKey.clear();
         mSessionKey.clear();
@@ -182,7 +182,7 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         mDecryptedSessionKey.clear();
         mEncryptedMessage.clear();
         mDecryptedMessage.clear();
-        qDebug() << "Master Key: " << mMasterKey << "\nusername: " << mUsername << "\npassword: " << mPassword << "\nprivatekey: " << mRsaKeyPair.privateKey
+        qDebug() << "Master Key: " << mMasterKey << "\nsalt: " << mSalt << "\npassword: " << mPassword << "\nprivatekey: " << mRsaKeyPair.privateKey
                  << "\npublickey: " << mRsaKeyPair.publicKey << "\nencrypted session key: " << mEncryptedSessionKey
                  << "\ndecrypted session key: " << mDecryptedSessionKey << "\nencrypted message: " << mEncryptedMessage
                  << "\ndecrypted message: " << mDecryptedMessage;
