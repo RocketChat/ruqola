@@ -28,36 +28,42 @@ curl -X POST http://localhost:3000/api/v1/login \
 using namespace EncryptionUtils;
 using namespace RocketChatRestApi;
 
-const QString url = QStringLiteral("http://localhost:3000");
+const auto url = QStringLiteral("http://localhost:3000");
 
-QHash<QString, QString> loadCredentials(const QString &filePath)
+QHash<QString, QString> loadEnvFile(const QString &filePath)
 {
-    QHash<QString, QString> creds;
+    QHash<QString, QString> env;
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Could not open credentials file:" << filePath;
-        return creds;
+        qWarning() << "Could not open .env file:" << filePath;
+        return env;
     }
 
     while (!file.atEnd()) {
         const QString line = QString::fromUtf8(file.readLine()).trimmed();
 
-        if (line.startsWith(QLatin1Char('#')) || !line.contains(QLatin1Char('=')))
+        if (line.startsWith(QLatin1Char('#')) || line.isEmpty())
             continue;
 
-        const auto parts = line.split(QLatin1Char('='), Qt::KeepEmptyParts);
-        if (parts.size() == 2)
-            creds[parts[0].trimmed()] = parts[1].trimmed();
+        const int equalSignIndex = line.indexOf(QLatin1Char('='));
+
+        if (equalSignIndex == -1)
+            continue;
+
+        const QString key = line.left(equalSignIndex).trimmed();
+        const QString value = line.mid(equalSignIndex + 1).trimmed();
+
+        env[key] = value;
     }
 
-    return creds;
+    return env;
 }
 
 void uploadKeys(const QString &authToken, const QString &userId, const QString &password, QNetworkAccessManager *networkManager)
 {
-    RSAKeyPair keyPair = generateRSAKey();
-    QByteArray masterKey = getMasterKey(password, QStringLiteral("salt"));
-    QByteArray encryptedPrivateKey = encryptPrivateKey(keyPair.privateKey, masterKey);
+    const auto keyPair = generateRSAKey();
+    const auto masterKey = getMasterKey(password, QStringLiteral("salt"));
+    const auto encryptedPrivateKey = encryptPrivateKey(keyPair.privateKey, masterKey);
 
     auto *uploadJob = new SetUserPublicAndPrivateKeysJob();
 
@@ -94,14 +100,14 @@ void downloadKeys(const QString &password)
     auto *fetchJob = new FetchMyKeysJob();
 
     QObject::connect(fetchJob, &FetchMyKeysJob::fetchMyKeysDone, fetchJob, [password](const QJsonObject &jsonObj) {
-        QString publicKey = jsonObj["public_key"_L1].toString();
-        QString encryptedPrivateKeyB64 = jsonObj["private_key"_L1].toString();
+        const auto publicKey = jsonObj["public_key"_L1].toString();
+        const auto encryptedPrivateKeyB64 = jsonObj["private_key"_L1].toString();
 
         qDebug() << "Downloaded Public Key:" << publicKey;
 
-        QByteArray encryptedPrivateKey = QByteArray::fromBase64(encryptedPrivateKeyB64.toUtf8());
-        QByteArray masterKey = getMasterKey(password, QStringLiteral("salt"));
-        QByteArray decryptedPrivateKey = decryptPrivateKey(encryptedPrivateKey, masterKey);
+        const auto encryptedPrivateKey = QByteArray::fromBase64(encryptedPrivateKeyB64.toUtf8());
+        const auto masterKey = getMasterKey(password, QStringLiteral("salt"));
+        const auto decryptedPrivateKey = decryptPrivateKey(encryptedPrivateKey, masterKey);
 
         qDebug() << "Decrypted Private Key:\n" << QString::fromUtf8(decryptedPrivateKey);
 
@@ -125,7 +131,7 @@ int main(int argc, char *argv[])
     auto *loginJob = new LoginJob(&app);
     auto *restApiMethod = new RestApiMethod();
 
-    auto creds = loadCredentials(QStringLiteral("/home/edc/rocketchat/ruqola/src/apps/credentials.txt"));
+    auto creds = loadEnvFile(QStringLiteral("/home/edc/rocketchat/ruqola/.env"));
 
     restApiMethod->setServerUrl(url);
 

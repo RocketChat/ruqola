@@ -35,4 +35,3 @@ compile_commands.json
 .qtcreator/
 .env
 docker-compose.yml
-credentials.txt
