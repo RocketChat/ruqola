@@ -170,6 +170,24 @@ if(USE_E2E_SUPPORT)
     add_ruqola_test(rsapairtest.cpp)
     add_ruqola_test(sessionkeytest.cpp)
     add_ruqola_test(messageencryptiondecryptiontest.cpp)
+#    add_ruqola_test(uploaddownloadrsakeypairtest.cpp
+#  ${CMAKE_SOURCE_DIR}/tests/encryptiontest/uploaddownloadrsakeypair.cpp
+#    ${CMAKE_SOURCE_DIR}/tests/encryptiontest/loginmanager.cpp
+#    ${CMAKE_SOURCE_DIR}/tests/encryptiontest/envutils.cpp         
+##    ${CMAKE_SOURCE_DIR}/src/core/encryption/encryptionutils.cpp
+#    ${CMAKE_SOURCE_DIR}/src/rocketchatrestapi-qt/restapimethod.cpp 
+#    ${CMAKE_SOURCE_DIR}/src/rocketchatrestapi-qt/e2e/fetchmykeysjob.cpp
+#    ${CMAKE_SOURCE_DIR}/src/rocketchatrestapi-qt/e2e/setuserpublicandprivatekeysjob.cpp          
+#    ${CMAKE_SOURCE_DIR}/src/rocketchatrestapi-qt/authentication/loginjob.cpp)
+#
+#    target_include_directories(uploaddownloadrsakeypairtest PRIVATE
+##        ${CMAKE_SOURCE_DIR}/tests/encryptiontest
+ #       ${CMAKE_SOURCE_DIR}/src/core/encryption
+  #      ${CMAKE_SOURCE_DIR}/src/core
+  #      ${CMAKE_SOURCE_DIR}/src/rocketchatrestapi-qt
+  #      ${CMAKE_SOURCE_DIR}/src/rocketchatrestapi-qt/e2e
+  #  )
+
 endif()
 
 add_ruqola_test(channelstest.cpp)
@@ -186,4 +204,5 @@ add_ruqola_test(actionbuttontest.cpp)
 add_ruqola_test(actionbuttonsmanagertest.cpp)
 add_ruqola_test(previewcommandtest.cpp)
 add_ruqola_test(previewcommandutilstest.cpp)
+
 

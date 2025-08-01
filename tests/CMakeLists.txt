@@ -13,7 +13,7 @@ if(TEXT_CONVERTER_CMARK_SUPPORT)
     add_subdirectory(cmarktestgui)
 endif()
 if(OPTION_USE_E2E_SUPPORT)
-    add_subdirectory(encryptiontestgui)
+    add_subdirectory(encryptiontest)
 endif()
 
 add_subdirectory(passwordvalidategui)
