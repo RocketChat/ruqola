@@ -1,3 +1,8 @@
+/*
+   SPDX-FileCopyrightText: 2025 Andro Ranogajec <ranogaet@gmail.com>
+   SPDX-License-Identifier: LGPL-2.0-or-later
+*/
+
 #include "uploaddownloadrsakeypair.h"
 #include "loginmanager.h"
 #include "uploaddownloadrsakeypairtest.h"

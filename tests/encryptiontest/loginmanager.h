@@ -12,7 +12,6 @@
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QObject>
-#include <functional>
 
 class LoginManager : public QObject
 {

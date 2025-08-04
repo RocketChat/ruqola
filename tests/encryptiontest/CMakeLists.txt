@@ -16,9 +16,6 @@ add_executable(encryptiontestcli
     ${CMAKE_CURRENT_SOURCE_DIR}/uploaddownloadrsakeypair.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/loginmanager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/envutils.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/uploaddownloadrsakeypair.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/loginmanager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/envutils.h
 )
 target_include_directories(encryptiontestcli PRIVATE
     ${CMAKE_SOURCE_DIR}/src/core/encryption

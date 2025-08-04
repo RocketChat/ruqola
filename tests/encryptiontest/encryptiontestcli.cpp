@@ -12,7 +12,6 @@ curl -X POST http://localhost:3000/api/v1/login \
   -d '{"user": "", "password": ""}'
 */
 
-#include "authentication/loginjob.h"
 #include "e2e/fetchmykeysjob.h"
 #include "e2e/setuserpublicandprivatekeysjob.h"
 #include "encryptionutils.h"
@@ -21,8 +20,6 @@ curl -X POST http://localhost:3000/api/v1/login \
 #include "uploaddownloadrsakeypair.h"
 #include <QCoreApplication>
 #include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
 
 using namespace EncryptionUtils;
 
@@ -31,8 +28,8 @@ const auto url = QStringLiteral("http://localhost:3000");
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    QNetworkAccessManager *networkManager = new QNetworkAccessManager(&app);
-    LoginManager *loginManager = new LoginManager(&app);
+    auto *networkManager = new QNetworkAccessManager(&app);
+    auto *loginManager = new LoginManager(&app);
     loginManager->login(url, networkManager);
 
     QObject::connect(loginManager, &LoginManager::loginSucceeded, &app, [=](const QString &authToken, const QString &userId) {
