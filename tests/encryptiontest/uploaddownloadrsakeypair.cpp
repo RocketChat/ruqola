@@ -22,6 +22,7 @@ void uploadKeys(const QString &authToken,
     const auto masterKey = getMasterKey(password, QStringLiteral("salt"));
     const auto encryptedPrivateKey = encryptPrivateKey(keyPair.privateKey, masterKey);
 
+    qDebug() << "uploadKeys called with authToken:" << authToken;
     auto *uploadJob = new SetUserPublicAndPrivateKeysJob();
     auto *restApiMethod = new RestApiMethod();
     restApiMethod->setServerUrl(url);

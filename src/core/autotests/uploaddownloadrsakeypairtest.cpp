@@ -7,22 +7,26 @@
 #include "loginmanager.h"
 #include "uploaddownloadrsakeypairtest.h"
 #include <QCoreApplication>
+#include <QDebug>
 #include <QObject>
 #include <QTest>
+
+QTEST_GUILESS_MAIN(UploadDownloadRsaKeyPairTest)
 
 void UploadDownloadRsaKeyPairTest::uploadDownloadCompare()
 {
     auto app = QCoreApplication::instance();
 
-    LoginManager loginManager;
-    QNetworkAccessManager networkManager;
-    const QString url = QStringLiteral("http://localhost:3000");
-    const QString password = QStringLiteral("mypassword123");
+    auto loginManager = new LoginManager(app);
+    auto networkManager = new QNetworkAccessManager(app);
+    const auto url = QStringLiteral("http://localhost:3000");
+    const auto password = QStringLiteral("mypassword123");
     bool testPassed = false;
 
-    QObject::connect(&loginManager, &LoginManager::loginSucceeded, this, [&](const QString &authToken, const QString &userId) {
-        uploadKeys(authToken, url, userId, password, &networkManager, [&](const QString &message, const EncryptionUtils::RSAKeyPair &keypair) {
-            downloadKeys(authToken, url, userId, password, &networkManager, [&](const QString &publicKey, const QString &decryptedPrivateKey) {
+    QObject::connect(loginManager, &LoginManager::loginSucceeded, this, [&](const QString &authToken, const QString &userId) {
+        qDebug() << "Login succeeded! authToken:" << authToken << "userId:" << userId;
+        uploadKeys(authToken, url, userId, password, networkManager, [&](const QString &message, const EncryptionUtils::RSAKeyPair &keypair) {
+            downloadKeys(authToken, url, userId, password, networkManager, [&](const QString &publicKey, const QString &decryptedPrivateKey) {
                 QCOMPARE(publicKey, QString::fromUtf8(keypair.publicKey));
                 QCOMPARE(decryptedPrivateKey, QString::fromUtf8(keypair.privateKey));
                 testPassed = true;
@@ -31,16 +35,15 @@ void UploadDownloadRsaKeyPairTest::uploadDownloadCompare()
         });
     });
 
-    QObject::connect(&loginManager, &LoginManager::loginFailed, this, [&](const QString &err) {
+    QObject::connect(loginManager, &LoginManager::loginFailed, this, [&](const QString &err) {
         QFAIL(qPrintable(QStringLiteral("Login failed: %1").arg(err)));
         app->quit();
     });
 
-    loginManager.login(url, &networkManager);
+    loginManager->login(url, networkManager);
     app->exec();
 
     QVERIFY(testPassed);
 }
 
-QTEST_GUILESS_MAIN(UploadDownloadRsaKeyPairTest)
 #include "uploaddownloadrsakeypairtest.moc"

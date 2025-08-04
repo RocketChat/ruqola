@@ -95,6 +95,7 @@ void RestApiAbstractJob::setEnforcePasswordFallback(bool enforce)
 
 bool RestApiAbstractJob::canStart() const
 {
+    qDebug() << "canStart() called, mAuthToken:" << mAuthToken << "mUserId:" << mUserId;
     if (requireTwoFactorAuthentication() && mEnforcePasswordFallBack) {
         if (mAuthMethod.isEmpty() || mAuthCode.isEmpty()) {
             qCWarning(ROCKETCHATQTRESTAPI_LOG) << "Job required two factor auth but mAuthMethod or mAuthCode is empty";

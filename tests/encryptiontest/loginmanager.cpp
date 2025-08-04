@@ -21,6 +21,11 @@ void LoginManager::login(const QString &serverUrl, QNetworkAccessManager *networ
 
     loginJob->setRestApiMethod(restApiMethod);
     loginJob->setNetworkAccessManager(networkManager);
+
+    if (creds.value(QStringLiteral("USERNAME")).isEmpty() || creds.value(QStringLiteral("PASSWORD")).isEmpty()) {
+        qDebug() << "Username or password are empty!";
+    }
+
     loginJob->setUserName(creds.value(QStringLiteral("USERNAME")));
     loginJob->setPassword(creds.value(QStringLiteral("PASSWORD")));
 
