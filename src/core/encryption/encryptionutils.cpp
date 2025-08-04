@@ -365,12 +365,12 @@ QByteArray EncryptionUtils::decryptMessage(const QByteArray &encrypted, const QB
         return {};
     }
 
-    QByteArray iv = encrypted.left(16);
-    QByteArray cipherText = encrypted.mid(16);
+    const QByteArray iv = encrypted.left(16);
+    const QByteArray cipherText = encrypted.mid(16);
 
     qDebug() << cipherText << "QByteArray cipherText = encrypted.mid(16)";
 
-    QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);
+    const QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);
 
     qDebug() << plainText << "QByteArray plainText = decryptAES_CBC_128(cipherText, sessionKey, iv);";
 

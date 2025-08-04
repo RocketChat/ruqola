@@ -56,9 +56,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
             mPassword = passwordEdit->text();
             mMasterKey = EncryptionUtils::getMasterKey(mPassword, mSalt);
 
-            if (mMasterKey.isEmpty())
+            if (mMasterKey.isEmpty()) {
                 mTextEditResult->setPlainText(QStringLiteral("Master key is empty, generation failed!"));
-            else {
+            } else {
                 qDebug() << "Derived Master Key:" << mMasterKey.toBase64();
                 mTextEditResult->setPlainText((QStringLiteral("Master Key derivation succeeded!\n") + QString::fromUtf8(mMasterKey.toBase64())));
             }
@@ -78,11 +78,11 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonEncryptPrivateKey = new QPushButton(QStringLiteral("Encrypt Private Key"), this);
     mainLayout->addWidget(pushButtonEncryptPrivateKey);
     connect(pushButtonEncryptPrivateKey, &QPushButton::clicked, this, [this]() {
-        if (mMasterKey.isEmpty())
+        if (mMasterKey.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Master key is empty, encryption of the private key failed!"));
-        else if (mRsaKeyPair.privateKey.isEmpty())
+        } else if (mRsaKeyPair.privateKey.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Private key is empty, encryption of the private key failed!"));
-        else {
+        } else {
             mEncryptedPrivateKey = EncryptionUtils::encryptPrivateKey(mRsaKeyPair.privateKey, mMasterKey);
             qDebug() << mEncryptedPrivateKey.toBase64() << "encrypted and encoded to 'base64()' private key ";
             mTextEditResult->setPlainText(QStringLiteral("Private key encryption succeded!\n") + QString::fromUtf8(mEncryptedPrivateKey.toBase64()));
@@ -92,11 +92,11 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonDecryptPrivateKey = new QPushButton(QStringLiteral("Decrypt Private Key"), this);
     mainLayout->addWidget(pushButtonDecryptPrivateKey);
     connect(pushButtonDecryptPrivateKey, &QPushButton::clicked, this, [this]() {
-        if (mMasterKey.isEmpty())
+        if (mMasterKey.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Master key is empty, encryption of the private key failed!"));
-        else if (mEncryptedPrivateKey.isEmpty())
+        } else if (mEncryptedPrivateKey.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Encrypted private key is empty, decryption of the private key failed!"));
-        else {
+        } else {
             mDecryptedPrivateKey = EncryptionUtils::decryptPrivateKey(mEncryptedPrivateKey, mMasterKey);
             mTextEditResult->setPlainText(QStringLiteral("Private key decryption succeded!\n") + QString::fromUtf8(mDecryptedPrivateKey));
             qDebug() << mDecryptedPrivateKey << "decrypted private key '\n' ";
@@ -115,10 +115,10 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     auto pushButtonEncryptSessionKey = new QPushButton(QStringLiteral("Encrypt Session Key"), this);
     mainLayout->addWidget(pushButtonEncryptSessionKey);
     connect(pushButtonEncryptSessionKey, &QPushButton::clicked, this, [this]() {
-        auto publicKey = mRsaKeyPair.publicKey;
-        if (publicKey.isEmpty())
+        const auto publicKey = mRsaKeyPair.publicKey;
+        if (publicKey.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Public key is empty, session key encryption failed!\n"));
-        else {
+        } else {
             RSA *publicKeyfromPem = EncryptionUtils::publicKeyFromPEM(publicKey);
             mEncryptedSessionKey = EncryptionUtils::encryptSessionKey(mSessionKey, publicKeyfromPem);
             qDebug() << "Public Key from PEM:" << publicKeyfromPem;
@@ -131,9 +131,9 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
     mainLayout->addWidget(pushButtonDecryptSessionKey);
     connect(pushButtonDecryptSessionKey, &QPushButton::clicked, this, [this]() {
         auto privateKey = mRsaKeyPair.privateKey;
-        if (privateKey.isEmpty())
+        if (privateKey.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Private key is empty, session key decryption failed!\n"));
-        else {
+        } else {
             RSA *privateKeyfromPem = EncryptionUtils::privateKeyFromPEM(privateKey);
             mDecryptedSessionKey = EncryptionUtils::decryptSessionKey(mEncryptedSessionKey, privateKeyfromPem);
             qDebug() << "Private Key from PEM:" << privateKeyfromPem;
@@ -173,8 +173,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         mTextEdit->clear();
         mTextEditResult->clear();
         mMasterKey.clear();
-        mPassword = QStringLiteral("");
-        mSalt = QStringLiteral("");
+        mPassword = QString();
+        mSalt = QString();
         mRsaKeyPair.privateKey.clear();
         mRsaKeyPair.publicKey.clear();
         mSessionKey.clear();
