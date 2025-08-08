@@ -28,8 +28,8 @@ const auto url = QStringLiteral("http://localhost:3000");
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    auto *networkManager = new QNetworkAccessManager(&app);
-    auto *loginManager = new LoginManager(&app);
+    auto networkManager = new QNetworkAccessManager(&app);
+    auto loginManager = new LoginManager(&app);
     loginManager->login(url, networkManager);
 
     QObject::connect(loginManager, &LoginManager::loginSucceeded, &app, [=](const QString &authToken, const QString &userId) {

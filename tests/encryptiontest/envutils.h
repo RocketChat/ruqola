@@ -7,4 +7,4 @@
 #include <QHash>
 #include <QString>
 
-QHash<QString, QString> loadEnvFile(const QString &filePath);
+[[nodiscard]] QHash<QString, QString> loadEnvFile(const QString &filePath);

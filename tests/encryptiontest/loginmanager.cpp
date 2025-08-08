@@ -12,8 +12,8 @@ LoginManager::LoginManager(QObject *parent)
 
 void LoginManager::login(const QString &serverUrl, QNetworkAccessManager *networkManager)
 {
-    auto envPath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../../.env"));
-    auto creds = loadEnvFile(envPath);
+    const auto envPath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../../.env"));
+    const auto creds = loadEnvFile(envPath);
 
     loginJob = new RocketChatRestApi::LoginJob(this);
     restApiMethod = new RocketChatRestApi::RestApiMethod();
