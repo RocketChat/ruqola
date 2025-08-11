@@ -23,8 +23,8 @@ void uploadKeys(const QString &authToken,
     const auto encryptedPrivateKey = encryptPrivateKey(keyPair.privateKey, masterKey);
 
     qDebug() << "uploadKeys called with authToken:" << authToken;
-    auto *uploadJob = new SetUserPublicAndPrivateKeysJob();
-    auto *restApiMethod = new RestApiMethod();
+    const auto uploadJob = new SetUserPublicAndPrivateKeysJob();
+    const auto restApiMethod = new RestApiMethod();
     restApiMethod->setServerUrl(url);
 
     uploadJob->setRestApiMethod(restApiMethod);
@@ -59,8 +59,8 @@ void downloadKeys(const QString &authToken,
                   QNetworkAccessManager *networkManager,
                   std::function<void(QString, QString)> onSuccess)
 {
-    auto *fetchJob = new FetchMyKeysJob();
-    auto *restApiMethod = new RestApiMethod();
+    const auto fetchJob = new FetchMyKeysJob();
+    const auto restApiMethod = new RestApiMethod();
     restApiMethod->setServerUrl(url);
 
     fetchJob->setRestApiMethod(restApiMethod);
