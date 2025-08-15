@@ -5,9 +5,10 @@
 
 #pragma once
 
+#include "libruqolacore_export.h"
 #include "localdatabasebase.h"
 
-class E2EKeyStore : public LocalDatabaseBase
+class LIBRUQOLACORE_EXPORT E2EKeyStore : public LocalDatabaseBase
 {
 public:
     E2EKeyStore();
