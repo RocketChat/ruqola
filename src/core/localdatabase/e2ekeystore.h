@@ -13,12 +13,12 @@ public:
     E2EKeyStore();
     ~E2EKeyStore() override;
 
-    bool saveKey(const QString &userId, const QByteArray &encryptedPrivateKey, const QByteArray &publicKey);
-    bool loadKey(const QString &userId, QByteArray &encryptedPrivateKey, QByteArray &publicKey);
-    bool deleteKey(const QString &userId);
-    bool hasKey(const QString &userId);
+    [[nodiscard]] bool saveKey(const QString &userId, const QByteArray &encryptedPrivateKey, const QByteArray &publicKey);
+    [[nodiscard]] bool loadKey(const QString &userId, QByteArray &encryptedPrivateKey, QByteArray &publicKey);
+    [[nodiscard]] bool deleteKey(const QString &userId);
+    [[nodiscard]] bool hasKey(const QString &userId);
 
-    QString schemaDataBase() const override;
+    [[nodiscard]] QString schemaDataBase() const override;
 
 private:
     static const char s_schemaE2EKeyStore[];
