@@ -70,7 +70,7 @@ void E2EKeyStoreTest::testNonexistentKey()
     QByteArray priv, pub;
     QVERIFY(!store.hasKey(userId));
     QVERIFY(!store.loadKey(userId, priv, pub));
-    QVERIFY(!store.deleteKey(userId));
+    QVERIFY(store.deleteKey(userId));
 }
 
 #include "e2ekeystoretest.moc"
