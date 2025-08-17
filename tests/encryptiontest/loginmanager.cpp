@@ -10,10 +10,13 @@ LoginManager::LoginManager(QObject *parent)
 {
 }
 
-void LoginManager::login(const QString &serverUrl, QNetworkAccessManager *networkManager)
+void LoginManager::login(const QString &serverUrl, QNetworkAccessManager *networkManager, int userIndex)
 {
     const auto envPath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../../.env"));
     const auto creds = loadEnvFile(envPath);
+
+    const auto usernameKey = userIndex == 0 ? QStringLiteral("USERNAME") : QStringLiteral("USERNAME%1").arg(userIndex);
+    const auto passwordKey = userIndex == 0 ? QStringLiteral("PASSWORD") : QStringLiteral("PASSWORD%1").arg(userIndex);
 
     loginJob = new RocketChatRestApi::LoginJob(this);
     restApiMethod = new RocketChatRestApi::RestApiMethod();
@@ -22,12 +25,12 @@ void LoginManager::login(const QString &serverUrl, QNetworkAccessManager *networ
     loginJob->setRestApiMethod(restApiMethod);
     loginJob->setNetworkAccessManager(networkManager);
 
-    if (creds.value(QStringLiteral("USERNAME")).isEmpty() || creds.value(QStringLiteral("PASSWORD")).isEmpty()) {
+    if (creds.value(usernameKey).isEmpty() || creds.value(passwordKey).isEmpty()) {
         qDebug() << "Username or password are empty!";
     }
 
-    loginJob->setUserName(creds.value(QStringLiteral("USERNAME")));
-    loginJob->setPassword(creds.value(QStringLiteral("PASSWORD")));
+    loginJob->setUserName(creds.value(usernameKey));
+    loginJob->setPassword(creds.value(passwordKey));
 
     QObject::connect(loginJob, &RocketChatRestApi::LoginJob::loginDone, this, [this](const QString &authToken, const QString &userId) {
         Q_EMIT loginSucceeded(authToken, userId);

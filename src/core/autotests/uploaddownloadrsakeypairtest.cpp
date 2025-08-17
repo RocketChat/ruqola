@@ -39,7 +39,7 @@ void UploadDownloadRsaKeyPairTest::uploadDownloadCompare()
         app->quit();
     });
 
-    loginManager->login(url, networkManager);
+    loginManager->login(url, networkManager, 0);
     app->exec();
 
     QVERIFY(testPassed);
