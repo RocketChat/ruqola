@@ -248,6 +248,11 @@ QByteArray EncryptionUtils::generateSessionKey()
     return generateRandomIV(16);
 }
 
+/**
+ * @brief Converts public key to an RSA.
+ *
+ *
+ */
 RSA *EncryptionUtils::publicKeyFromPEM(const QByteArray &pem)
 {
     BIO *bio = BIO_new_mem_buf(pem.constData(), pem.size());
@@ -266,6 +271,11 @@ RSA *EncryptionUtils::publicKeyFromPEM(const QByteArray &pem)
     return rsa;
 }
 
+/**
+ * @brief Converts private key to an RSA.
+ *
+ *
+ */
 RSA *EncryptionUtils::privateKeyFromPEM(const QByteArray &pem)
 {
     BIO *bio = BIO_new_mem_buf(pem.constData(), pem.size());
