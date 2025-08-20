@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "librocketchatrestapi-qt_export.h"
 #include "restapiabstractjob.h"
 #include <QString>
 #include <QVector>
@@ -23,7 +24,7 @@ struct SuggestedGroupKey {
     QString encryptedKey; // base64 ????
 };
 
-class ProvideUsersWithSuggestedGroupKeysJob : public RestApiAbstractJob
+class LIBROCKETCHATRESTAPI_QT_EXPORT ProvideUsersWithSuggestedGroupKeysJob : public RestApiAbstractJob
 {
     Q_OBJECT
 public:
@@ -52,5 +53,4 @@ private:
     QString mRoomId;
     QVector<SuggestedGroupKey> mKeys;
 };
-
 }
