@@ -33,16 +33,14 @@ public:
     void setRoomId(const QString &roomId);
     void setKeys(const QVector<SuggestedGroupKey> &keys);
 
-    QString roomId() const;
-    QVector<SuggestedGroupKey> keys() const;
+    [[nodiscard]] QString roomId() const;
+    [[nodiscard]] QVector<SuggestedGroupKey> keys() const;
+    [[nodiscard]] QNetworkRequest request() const override;
+    [[nodiscard]] QJsonDocument json() const;
 
-    bool start() override;
-    QNetworkRequest request() const override;
-    QJsonDocument json() const;
-
-    bool canStart() const override;
-
-    bool requireHttpAuthentication() const override;
+    [[nodiscard]] bool start() override;
+    [[nodiscard]] bool canStart() const override;
+    [[nodiscard]] bool requireHttpAuthentication() const override;
 
 protected:
     void onPostRequestResponse(const QString &replyErrorString, const QJsonDocument &replyJson) override;
