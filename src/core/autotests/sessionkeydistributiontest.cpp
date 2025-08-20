@@ -32,8 +32,8 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
     const auto roomId = QStringLiteral("123"); // Replace with a real room ID
 
     // Step 1: Login as two user
+    auto loginManager0 = new LoginManager(app);
     auto loginManager1 = new LoginManager(app);
-    auto loginManager2 = new LoginManager(app);
     QString user1Id, user2Id, user1Auth, user2Auth;
     EncryptionUtils::RSAKeyPair user1KeyPair, user2KeyPair;
     QByteArray sessionKey;
@@ -50,13 +50,13 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
 
         // Step 3: Encrypt session key with each user's public key
         QVector<RocketChatRestApi::SuggestedGroupKey> suggestedKeys;
-        QByteArray encryptedSessionKeyForUser1 = EncryptionUtils::encryptSessionKey(sessionKey, EncryptionUtils::publicKeyFromPEM(user1KeyPair.publicKey));
-        QByteArray encryptedSessionKeyForUser2 = EncryptionUtils::encryptSessionKey(sessionKey, EncryptionUtils::publicKeyFromPEM(user2KeyPair.publicKey));
+        const auto encryptedSessionKeyForUser1 = EncryptionUtils::encryptSessionKey(sessionKey, EncryptionUtils::publicKeyFromPEM(user1KeyPair.publicKey));
+        const auto encryptedSessionKeyForUser2 = EncryptionUtils::encryptSessionKey(sessionKey, EncryptionUtils::publicKeyFromPEM(user2KeyPair.publicKey));
         suggestedKeys.append({user1Id, encryptedSessionKeyForUser1.toBase64()});
         suggestedKeys.append({user2Id, encryptedSessionKeyForUser2.toBase64()});
 
         // Step 4: Distribute encrypted keys using API
-        auto provideJob = new RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob(app);
+        const auto provideJob = new RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob(app);
         provideJob->setRoomId(roomId);
         provideJob->setKeys(suggestedKeys);
         QObject::connect(
@@ -65,19 +65,19 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
             app,
             [&](const QJsonObject &) {
                 // Simulate user1 receiving and accepting the key
-                QByteArray encKey1 = QByteArray::fromBase64(suggestedKeys[0].encryptedKey.toUtf8());
-                QByteArray decKey1 = EncryptionUtils::decryptSessionKey(encKey1, EncryptionUtils::privateKeyFromPEM(user1KeyPair.privateKey));
+                const auto encKey1 = QByteArray::fromBase64(suggestedKeys[0].encryptedKey.toUtf8());
+                const auto decKey1 = EncryptionUtils::decryptSessionKey(encKey1, EncryptionUtils::privateKeyFromPEM(user1KeyPair.privateKey));
                 QCOMPARE(decKey1, sessionKey);
 
-                auto acceptJob1 = new RocketChatRestApi::AcceptSuggestedGroupKeyJob(app);
+                const auto acceptJob1 = new RocketChatRestApi::AcceptSuggestedGroupKeyJob(app);
                 acceptJob1->setRoomId(roomId);
                 QObject::connect(acceptJob1, &RocketChatRestApi::AcceptSuggestedGroupKeyJob::acceptSuggestedGroupKeyDone, app, [&](const QJsonObject &) {
                     // Simulate user2 receiving and rejecting the key
-                    QByteArray encKey2 = QByteArray::fromBase64(suggestedKeys[1].encryptedKey.toUtf8());
-                    QByteArray decKey2 = EncryptionUtils::decryptSessionKey(encKey2, EncryptionUtils::privateKeyFromPEM(user2KeyPair.privateKey));
+                    const auto encKey2 = QByteArray::fromBase64(suggestedKeys[1].encryptedKey.toUtf8());
+                    const auto decKey2 = EncryptionUtils::decryptSessionKey(encKey2, EncryptionUtils::privateKeyFromPEM(user2KeyPair.privateKey));
                     QCOMPARE(decKey2, sessionKey);
 
-                    auto rejectJob2 = new RocketChatRestApi::RejectSuggestedGroupKeyJob(app);
+                    const auto rejectJob2 = new RocketChatRestApi::RejectSuggestedGroupKeyJob(app);
                     rejectJob2->setRoomId(roomId);
                     QObject::connect(rejectJob2, &RocketChatRestApi::RejectSuggestedGroupKeyJob::rejectSuggestedGroupKeyDone, app, [&](const QJsonObject &) {
                         testPassed = true;
@@ -91,7 +91,7 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
     };
 
     // Step 1a: Login and upload keys for user1
-    QObject::connect(loginManager1,
+    QObject::connect(loginManager0,
                      &LoginManager::loginSucceeded,
                      this,
                      [=, &user1Id, &user1Auth, &user1KeyPair](const QString &authToken, const QString &userId) {
@@ -102,10 +102,10 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
                              proceed();
                          });
                      });
-    loginManager1->login(url, networkManager, 0);
+    loginManager0->login(url, networkManager, 0);
 
     // Step 1b: Login and upload keys for user2
-    QObject::connect(loginManager2,
+    QObject::connect(loginManager1,
                      &LoginManager::loginSucceeded,
                      this,
                      [=, &user2Id, &user2Auth, &user2KeyPair](const QString &authToken, const QString &userId) {
@@ -116,14 +116,14 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
                              proceed();
                          });
                      });
-    loginManager2->login(url, networkManager, 1);
+    loginManager1->login(url, networkManager, 1);
 
     // Handle login failures
-    QObject::connect(loginManager1, &LoginManager::loginFailed, this, [=](const QString &err) {
+    QObject::connect(loginManager0, &LoginManager::loginFailed, this, [=](const QString &err) {
         QFAIL(qPrintable(QStringLiteral("User1 login failed: %1").arg(err)));
         app->quit();
     });
-    QObject::connect(loginManager2, &LoginManager::loginFailed, this, [=](const QString &err) {
+    QObject::connect(loginManager1, &LoginManager::loginFailed, this, [=](const QString &err) {
         QFAIL(qPrintable(QStringLiteral("User2 login failed: %1").arg(err)));
         app->quit();
     });

@@ -243,14 +243,19 @@ QByteArray EncryptionUtils::getMasterKey(const QString &password, const QString 
 #endif
 }
 
+/**
+ * @brief Generates a random 16-byte (128-bit) session key for AES encryption.
+ *
+ * @return A QByteArray containing 16 random bytes suitable for use as an AES-128 session key.
+ */
 QByteArray EncryptionUtils::generateSessionKey()
 {
     return generateRandomIV(16);
 }
 
 /**
- * @brief Converts public key to an RSA.
- *
+ * @brief Converts public key from QByteArray to RSA.
+ * @param QByteArray &pem
  *
  */
 RSA *EncryptionUtils::publicKeyFromPEM(const QByteArray &pem)
@@ -272,8 +277,8 @@ RSA *EncryptionUtils::publicKeyFromPEM(const QByteArray &pem)
 }
 
 /**
- * @brief Converts private key to an RSA.
- *
+ * @brief Converts private key from QByteArray to RSA.
+ * @param QByteArray &pem
  *
  */
 RSA *EncryptionUtils::privateKeyFromPEM(const QByteArray &pem)
