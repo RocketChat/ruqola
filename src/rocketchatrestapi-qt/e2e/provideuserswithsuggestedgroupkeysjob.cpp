@@ -27,7 +27,7 @@ void ProvideUsersWithSuggestedGroupKeysJob::setRoomId(const QString &roomId)
 
 void ProvideUsersWithSuggestedGroupKeysJob::setKeys(const QVector<SuggestedGroupKey> &keys)
 {
-    mKeys = keys;
+    mSuggestedGroupKeys = keys;
 }
 
 QString ProvideUsersWithSuggestedGroupKeysJob::roomId() const
@@ -37,7 +37,7 @@ QString ProvideUsersWithSuggestedGroupKeysJob::roomId() const
 
 QVector<SuggestedGroupKey> ProvideUsersWithSuggestedGroupKeysJob::keys() const
 {
-    return mKeys;
+    return mSuggestedGroupKeys;
 }
 
 bool ProvideUsersWithSuggestedGroupKeysJob::requireHttpAuthentication() const
@@ -83,7 +83,7 @@ QJsonDocument ProvideUsersWithSuggestedGroupKeysJob::json() const
     QJsonObject obj;
     obj["rid"_L1] = mRoomId;
     QJsonArray keysArr;
-    for (const auto &k : mKeys) {
+    for (const auto &k : mSuggestedGroupKeys) {
         QJsonObject keyObj;
         keyObj["userId"_L1] = k.userId;
         keyObj["key"_L1] = k.encryptedKey;
@@ -98,7 +98,7 @@ bool ProvideUsersWithSuggestedGroupKeysJob::canStart() const
     if (!RestApiAbstractJob::canStart()) {
         return false;
     }
-    if (mRoomId.isEmpty() || mKeys.isEmpty()) {
+    if (mRoomId.isEmpty() || mSuggestedGroupKeys.isEmpty()) {
         qCWarning(ROCKETCHATQTRESTAPI_LOG) << "ProvideUsersWithSuggestedGroupKeysJob: roomId or keys is empty";
         return false;
     }

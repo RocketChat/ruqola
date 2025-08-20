@@ -12,6 +12,9 @@
 #include "loginmanager.h"
 #include "uploaddownloadrsakeypair.h"
 #include <QCoreApplication>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QTest>
 QTEST_GUILESS_MAIN(SessionKeyDistributionTest)
@@ -21,6 +24,8 @@ class SessionKeyDistributionTest : public QObject
     Q_OBJECT
 private Q_SLOTS:
     void testSessionKeyDistribution();
+    void testJsonPayload();
+    void testCanStartValidation();
 };
 
 void SessionKeyDistributionTest::testSessionKeyDistribution()
@@ -130,6 +135,35 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
 
     app->exec();
     QVERIFY(testPassed);
+}
+
+void SessionKeyDistributionTest::testJsonPayload()
+{
+    RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob job;
+    job.setRoomId("123");
+    const QVector<RocketChatRestApi::SuggestedGroupKey> suggestedGroupKeys = {{"userA", "base64keyA"}, {"userB", "base64keyB"}};
+    job.setKeys(suggestedGroupKeys);
+
+    const QJsonDocument doc = job.json();
+    const QJsonObject obj = doc.object();
+    QCOMPARE(obj["rid"].toString(), QStringLiteral("123"));
+    QJsonArray arr = obj["keys"].toArray();
+    QCOMPARE(arr.size(), 2);
+    QCOMPARE(arr[0].toObject()["userId"].toString(), QStringLiteral("userA"));
+    QCOMPARE(arr[0].toObject()["key"].toString(), QStringLiteral("base64keyA"));
+}
+
+void SessionKeyDistributionTest::testCanStartValidation()
+{
+    RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob job;
+    QVERIFY(!job.canStart()); // No roomId or keys
+
+    job.setRoomId("room123");
+    QVERIFY(!job.canStart()); // No keys
+
+    QVector<RocketChatRestApi::SuggestedGroupKey> keys = {{"userA", "base64keyA"}};
+    job.setKeys(keys);
+    QVERIFY(job.canStart()); // Now valid
 }
 
 #include "sessionkeydistributiontest.moc"

@@ -51,6 +51,6 @@ Q_SIGNALS:
 
 private:
     QString mRoomId;
-    QVector<SuggestedGroupKey> mKeys;
+    QVector<SuggestedGroupKey> mSuggestedGroupKeys;
 };
 }

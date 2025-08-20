@@ -42,4 +42,6 @@ class SessionKeyDistributionTest : public QObject
     Q_OBJECT
 private Q_SLOTS:
     void testSessionKeyDistribution();
+    void testJsonPayload();
+    void testCanStartValidation();
 };
