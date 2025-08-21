@@ -182,6 +182,8 @@ target_sources(librocketchatrestapi-qt PRIVATE
 
     e2e/acceptsuggestedgroupkeyjob.cpp
     e2e/acceptsuggestedgroupkeyjob.h
+    e2e/provideuserswithsuggestedgroupkeysjob.cpp
+    e2e/provideuserswithsuggestedgroupkeysjob.h
     e2e/rejectsuggestedgroupkeyjob.cpp
     e2e/rejectsuggestedgroupkeyjob.h
     e2e/resetroomkeyjob.cpp
