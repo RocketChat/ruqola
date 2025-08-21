@@ -146,6 +146,8 @@ EncryptionTestGui::EncryptionTestGui(QWidget *parent)
         const auto text = mTextEdit->toPlainText();
         if (text.isEmpty()) {
             mTextEditResult->setPlainText(QStringLiteral("Text cannot be null, message encryption failed!\n"));
+        } else if (!text.isEmpty() && mSessionKey.isEmpty()) {
+            mTextEditResult->setPlainText(QStringLiteral("Session key is empty, message encryption failed!\n"));
         } else {
             mEncryptedMessage = EncryptionUtils::encryptMessage(text.toUtf8(), mSessionKey);
             qDebug() << "Encrypted message:" << mEncryptedMessage.toBase64();

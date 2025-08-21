@@ -19,15 +19,6 @@
 #include <QTest>
 QTEST_GUILESS_MAIN(SessionKeyDistributionTest)
 
-class SessionKeyDistributionTest : public QObject
-{
-    Q_OBJECT
-private Q_SLOTS:
-    void testSessionKeyDistribution();
-    void testJsonPayload();
-    void testCanStartValidation();
-};
-
 void SessionKeyDistributionTest::testSessionKeyDistribution()
 {
     const auto app = QCoreApplication::instance();
@@ -57,8 +48,8 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
         QVector<RocketChatRestApi::SuggestedGroupKey> suggestedKeys;
         const auto encryptedSessionKeyForUser1 = EncryptionUtils::encryptSessionKey(sessionKey, EncryptionUtils::publicKeyFromPEM(user1KeyPair.publicKey));
         const auto encryptedSessionKeyForUser2 = EncryptionUtils::encryptSessionKey(sessionKey, EncryptionUtils::publicKeyFromPEM(user2KeyPair.publicKey));
-        suggestedKeys.append({user1Id, encryptedSessionKeyForUser1.toBase64()});
-        suggestedKeys.append({user2Id, encryptedSessionKeyForUser2.toBase64()});
+        suggestedKeys.append({user1Id, QString::fromLatin1(encryptedSessionKeyForUser1.toBase64())});
+        suggestedKeys.append({user2Id, QString::fromLatin1(encryptedSessionKeyForUser2.toBase64())});
 
         // Step 4: Distribute encrypted keys using API
         const auto provideJob = new RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob(app);
