@@ -5,7 +5,6 @@
 */
 
 #pragma once
-
 #include <QObject>
 
 /**
@@ -40,6 +39,9 @@
 class SessionKeyDistributionTest : public QObject
 {
     Q_OBJECT
+public:
+    explicit SessionKeyDistributionTest(QObject *parent = nullptr);
+    ~SessionKeyDistributionTest() override = default;
 private Q_SLOTS:
     void testSessionKeyDistribution();
     void testJsonPayload();
