@@ -174,6 +174,17 @@ if(USE_E2E_SUPPORT)
     add_ruqola_test(uploaddownloadrsakeypairtest.cpp)
     add_ruqola_test(sessionkeydistributiontest.cpp)
 
+
+target_sources(sessionkeydistributiontest PRIVATE
+    ${CMAKE_SOURCE_DIR}/tests/encryptiontest/loginmanager.cpp
+    ${CMAKE_SOURCE_DIR}/tests/encryptiontest/envutils.cpp
+    ${CMAKE_SOURCE_DIR}/tests/encryptiontest/uploaddownloadrsakeypair.cpp
+)
+
+target_include_directories(sessionkeydistributiontest PRIVATE
+    ${CMAKE_SOURCE_DIR}/tests/encryptiontest
+     ${CMAKE_SOURCE_DIR}/src/core/encryption)
+
 target_include_directories(uploaddownloadrsakeypairtest PRIVATE
     ${CMAKE_SOURCE_DIR}/tests/encryptiontest
     ${CMAKE_SOURCE_DIR}/src/core/encryption

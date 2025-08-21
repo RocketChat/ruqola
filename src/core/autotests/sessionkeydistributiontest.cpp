@@ -37,7 +37,7 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
 
     // Helper: proceed when both users are ready
     int readyCount = 0;
-    auto proceed = [&]() {
+    auto proceed = [=, &readyCount, &sessionKey, &testPassed]() {
         if (++readyCount < 2)
             return;
 
@@ -52,37 +52,55 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
         suggestedKeys.append({user2Id, QString::fromLatin1(encryptedSessionKeyForUser2.toBase64())});
 
         // Step 4: Distribute encrypted keys using API
+        const auto provideMethod = new RocketChatRestApi::RestApiMethod;
+        provideMethod->setServerUrl(url);
         const auto provideJob = new RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob(app);
+        provideJob->setNetworkAccessManager(networkManager);
+        provideJob->setRestApiMethod(provideMethod);
         provideJob->setRoomId(roomId);
         provideJob->setKeys(suggestedKeys);
-        QObject::connect(
-            provideJob,
-            &RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob::provideUsersWithSuggestedGroupKeysDone,
-            app,
-            [&](const QJsonObject &) {
-                // Simulate user1 receiving and accepting the key
-                const auto encKey1 = QByteArray::fromBase64(suggestedKeys[0].encryptedKey.toUtf8());
-                const auto decKey1 = EncryptionUtils::decryptSessionKey(encKey1, EncryptionUtils::privateKeyFromPEM(user1KeyPair.privateKey));
-                QCOMPARE(decKey1, sessionKey);
+        QObject::connect(provideJob,
+                         &RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob::provideUsersWithSuggestedGroupKeysDone,
+                         app,
+                         [=, &testPassed](const QJsonObject &) {
+                             // Simulate user1 receiving and accepting the key
+                             const auto encKey1 = QByteArray::fromBase64(suggestedKeys[0].encryptedKey.toUtf8());
+                             const auto decKey1 = EncryptionUtils::decryptSessionKey(encKey1, EncryptionUtils::privateKeyFromPEM(user1KeyPair.privateKey));
+                             QCOMPARE(decKey1, sessionKey);
 
-                const auto acceptJob1 = new RocketChatRestApi::AcceptSuggestedGroupKeyJob(app);
-                acceptJob1->setRoomId(roomId);
-                QObject::connect(acceptJob1, &RocketChatRestApi::AcceptSuggestedGroupKeyJob::acceptSuggestedGroupKeyDone, app, [&](const QJsonObject &) {
-                    // Simulate user2 receiving and rejecting the key
-                    const auto encKey2 = QByteArray::fromBase64(suggestedKeys[1].encryptedKey.toUtf8());
-                    const auto decKey2 = EncryptionUtils::decryptSessionKey(encKey2, EncryptionUtils::privateKeyFromPEM(user2KeyPair.privateKey));
-                    QCOMPARE(decKey2, sessionKey);
+                             const auto acceptMethod = new RocketChatRestApi::RestApiMethod;
+                             acceptMethod->setServerUrl(url);
+                             const auto acceptJob1 = new RocketChatRestApi::AcceptSuggestedGroupKeyJob(app);
+                             acceptJob1->setRestApiMethod(acceptMethod);
+                             acceptJob1->setNetworkAccessManager(networkManager);
+                             acceptJob1->setRoomId(roomId);
+                             QObject::connect(acceptJob1,
+                                              &RocketChatRestApi::AcceptSuggestedGroupKeyJob::acceptSuggestedGroupKeyDone,
+                                              app,
+                                              [=, &testPassed](const QJsonObject &) {
+                                                  // Simulate user2 receiving and rejecting the key
+                                                  const auto encKey2 = QByteArray::fromBase64(suggestedKeys[1].encryptedKey.toUtf8());
+                                                  const auto decKey2 =
+                                                      EncryptionUtils::decryptSessionKey(encKey2, EncryptionUtils::privateKeyFromPEM(user2KeyPair.privateKey));
+                                                  QCOMPARE(decKey2, sessionKey);
 
-                    const auto rejectJob2 = new RocketChatRestApi::RejectSuggestedGroupKeyJob(app);
-                    rejectJob2->setRoomId(roomId);
-                    QObject::connect(rejectJob2, &RocketChatRestApi::RejectSuggestedGroupKeyJob::rejectSuggestedGroupKeyDone, app, [&](const QJsonObject &) {
-                        testPassed = true;
-                        app->quit();
-                    });
-                    rejectJob2->start();
-                });
-                acceptJob1->start();
-            });
+                                                  const auto rejectJob2 = new RocketChatRestApi::RejectSuggestedGroupKeyJob(app);
+                                                  auto rejectMethod = new RocketChatRestApi::RestApiMethod;
+                                                  rejectMethod->setServerUrl(url);
+                                                  rejectJob2->setRestApiMethod(rejectMethod);
+                                                  rejectJob2->setNetworkAccessManager(networkManager);
+                                                  rejectJob2->setRoomId(roomId);
+                                                  QObject::connect(rejectJob2,
+                                                                   &RocketChatRestApi::RejectSuggestedGroupKeyJob::rejectSuggestedGroupKeyDone,
+                                                                   app,
+                                                                   [&](const QJsonObject &) {
+                                                                       testPassed = true;
+                                                                       app->quit();
+                                                                   });
+                                                  rejectJob2->start();
+                                              });
+                             acceptJob1->start();
+                         });
         provideJob->start();
     };
 
@@ -131,17 +149,18 @@ void SessionKeyDistributionTest::testSessionKeyDistribution()
 void SessionKeyDistributionTest::testJsonPayload()
 {
     RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob job;
-    job.setRoomId("123");
-    const QVector<RocketChatRestApi::SuggestedGroupKey> suggestedGroupKeys = {{"userA", "base64keyA"}, {"userB", "base64keyB"}};
+    job.setRoomId(QStringLiteral("123"));
+    const QVector<RocketChatRestApi::SuggestedGroupKey> suggestedGroupKeys = {{QStringLiteral("userA"), QStringLiteral("base64keyA")},
+                                                                              {QStringLiteral("userB"), QStringLiteral("base64keyB")}};
     job.setKeys(suggestedGroupKeys);
 
     const QJsonDocument doc = job.json();
     const QJsonObject obj = doc.object();
-    QCOMPARE(obj["rid"].toString(), QStringLiteral("123"));
-    QJsonArray arr = obj["keys"].toArray();
+    QCOMPARE(obj[QStringLiteral("rid")].toString(), QStringLiteral("123"));
+    QJsonArray arr = obj[QStringLiteral("keys")].toArray();
     QCOMPARE(arr.size(), 2);
-    QCOMPARE(arr[0].toObject()["userId"].toString(), QStringLiteral("userA"));
-    QCOMPARE(arr[0].toObject()["key"].toString(), QStringLiteral("base64keyA"));
+    QCOMPARE(arr[0].toObject()[QStringLiteral("userId")].toString(), QStringLiteral("userA"));
+    QCOMPARE(arr[0].toObject()[QStringLiteral("key")].toString(), QStringLiteral("base64keyA"));
 }
 
 void SessionKeyDistributionTest::testCanStartValidation()
@@ -149,10 +168,10 @@ void SessionKeyDistributionTest::testCanStartValidation()
     RocketChatRestApi::ProvideUsersWithSuggestedGroupKeysJob job;
     QVERIFY(!job.canStart()); // No roomId or keys
 
-    job.setRoomId("room123");
+    job.setRoomId(QStringLiteral("room123"));
     QVERIFY(!job.canStart()); // No keys
 
-    QVector<RocketChatRestApi::SuggestedGroupKey> keys = {{"userA", "base64keyA"}};
+    QVector<RocketChatRestApi::SuggestedGroupKey> keys = {{QStringLiteral("userA"), QStringLiteral("base64keyA")}};
     job.setKeys(keys);
     QVERIFY(job.canStart()); // Now valid
 }
