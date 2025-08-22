@@ -21,3 +21,7 @@ add_ruqola_localdatabase_test(globaldatabasetest.cpp)
 add_ruqola_localdatabase_test(localaccountdatabasetest.cpp)
 add_ruqola_localdatabase_test(localroomsdatabasetest.cpp)
 add_ruqola_localdatabase_test(localdatabasebasetest.cpp)
+
+if(USE_E2E_SUPPORT)
+   add_ruqola_localdatabase_test(e2ekeystoretest.cpp)
+endif()

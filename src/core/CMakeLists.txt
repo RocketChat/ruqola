@@ -509,6 +509,8 @@ target_sources(libruqolacore PRIVATE
     servererrorinfohistorymanager.cpp
     servererrorinfohistorymanager.h
 
+    
+
     localdatabase/localmessagelogger.cpp
     localdatabase/localmessagelogger.h
 
@@ -526,9 +528,12 @@ target_sources(libruqolacore PRIVATE
 
     localdatabase/localdatabasebase.h
     localdatabase/localdatabasebase.cpp
-
+    
     localdatabase/localaccountdatabase.h
     localdatabase/localaccountdatabase.cpp
+
+    localdatabase/e2ekeystore.h
+    localdatabase/e2ekeystore.cpp
 
     localdatabase/globaldatabase.h
     localdatabase/globaldatabase.cpp
