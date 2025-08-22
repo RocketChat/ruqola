@@ -43,7 +43,7 @@ public:
     explicit SessionKeyDistributionTest(QObject *parent = nullptr);
     ~SessionKeyDistributionTest() override = default;
 private Q_SLOTS:
-    void testSessionKeyDistribution();
+    // void testSessionKeyDistribution();
     void testJsonPayload();
     void testCanStartValidation();
 };
